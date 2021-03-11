@@ -1,13 +1,7 @@
-%NAME??
-%Date??
-%Description??
-
 clear 
 close all
 clc
-
 %% Constants 
-
 a_1 = 1; % Distance from Earth to Sun 
 a_2 = 2.766; % Distance from Ceres to Sun 
 u_O = 1.33E+11; % Gravitation Parameter Sun (km^3/s^2)
@@ -22,14 +16,9 @@ EPOI = 28.573; % Earth Parking Orbit Inclination (Degrees)
 KSC = 27.573; % Kennedy Space Center (Degrees)
 CAI = 4.00; % Ceres Axis Inclination (Degrees) 
 g = 9.807; % gravity m/s^2
-
 DPC = (EAI +COP) - EPOI;
-
 constants = ["Orbital Height"; "Radius + Orbital Height";"Circular Orbit Velocity";"Ecentricity of Ellipse";"Semi Minor Axis";"Flight Path Angle at Second Burn";"Departure/Capture Velo";"Velo Necessary to Match Circular Velo";"Velocity Associated with Plane Change";"DelV then Plan Change";"DelV and Plane Change at the Same Time";"Mass Fraction"];
-
-
 %% Input Parameter
-
 h_ED = 200:1:500; %Input Height (Earth Departure). Iterating to see multiple values
 h_CC = 100:1:400; %Input Height (Ceres Capture). Iterating to see multiple values
 % h_ED = 408;
@@ -38,11 +27,7 @@ h_EC = h_ED; %Input Height (Earth Capture). Iterating to see multiple values
 h_CD = h_CC; %Input Height (Ceres Departure). Iterating to see multiple values
 l_1 = length(h_ED); 
 l_2 = length (h_CC);
-
-
-
 %% Earth-Ceres Hohmann Transfer
-
 V_A = sqrt(u_O/a_u); % Va in km/s
 V_B = sqrt(u_O/(a_u * a_2)); % Vb in km/s
 delV_A = V_A * (((2*a_2/(a_1+a_2))^(1/2))-1); % First Burn in km/s 
@@ -56,21 +41,16 @@ T_2 = sqrt((a_2/a_1)^3); % Orbit Period of Ceres
 S = 1/((1/T_1)-(1/T_2)); % Synodic Period
 alpha_pi = (((a_1+a_2)/(2*a_1))^(3/2))-1; % time used for wait time in years
 y_w = 1:1:5; %iterating years to wait
-
 for i = 1:5
     t_w = (y_w(i) - alpha_pi)*S; % wait time on ceres (years)
     if t_w <0
         i = i+1;
     else
         break
-    end 
-    
+    end   
 end 
-
 t_t = (2*t_T) + t_w; %Total Mission time (years)
-
 %% Earth Departure- Parameters and Solve
-
 a_OED = []; % Radius + Height (km)
 V_cirED = []; % Circular Orbit Velo (km/s)
 a_ED = mu_A/(delV_A^2); % Semi Major Axis of Ellipse 
@@ -95,21 +75,17 @@ for i = 1:l_1
     delV_pcED(i) = 2*V_cirED(i)*sind(DPC/2);
     delV_pED(i) = delV_pcED(i) + delV_DED(i);
     delV_ppED(i) = sqrt(((V_cirED(i))^2)+((V_HED(i))^2) - (2*V_cirED(i)*V_HED(i)*cosd(DPC)));
-    mo_ma_ED(i) = exp((1000*delV_DED(i))/(g*ISP));
-        
+    mo_ma_ED(i) = exp((1000*delV_DED(i))/(g*ISP));     
 end 
-
 matrix_ED = [constants [h_ED;a_OED;V_cirED;e_ED;b_ED;psi_ED;V_HED;delV_DED;delV_pcED;delV_pED;delV_ppED;mo_ma_ED]];
-
 for i = 1:l_1
     if min(mo_ma_ED)==mo_ma_ED(i)
-            target_v1 = delV_ppED(i)
-            target_h1 = h_ED(i)
-            target_mo_ma1 = mo_ma_ED(i)
+            target_v1 = delV_ppED(i);
+            target_h1 = h_ED(i);
+            target_mo_ma1 = mo_ma_ED(i);
             break
     end 
-end 
-        
+end      
 %% Ceres Capture- Parameters and Solve
 a_OCC = []; % Radius + Height (km)
 V_cirCC = []; % Circular Orbit Velo (km/s)
@@ -135,24 +111,18 @@ for i = 1:l_2
     delV_pcCC(i) = 2*V_cirCC(i)*sind(CAI/2);
     delV_pCC(i) = delV_pcCC(i) + delV_DCC(i);
     delV_ppCC(i) = sqrt(((V_cirCC(i))^2)+((V_HCC(i))^2) - (2*V_cirCC(i)*V_HCC(i)*cosd(CAI)));
-    mo_ma_CC(i) = exp((1000*delV_DCC(i))/(g*ISP));
-    
+    mo_ma_CC(i) = exp((1000*delV_DCC(i))/(g*ISP));  
 end 
-
 matrix_CC = [constants [h_CC;a_OCC;V_cirCC;e_CC;b_CC;psi_CC;V_HCC;delV_DCC;delV_pcCC;delV_pCC;delV_ppCC;mo_ma_CC]];
-
 for i = 1:l_2
     if min(mo_ma_CC)==mo_ma_CC(i)
-            target_v2 = delV_ppCC(i)
-            target_h2 = h_CC(i)
-            target_mo_ma2 = mo_ma_CC(i)
+            target_v2 = delV_ppCC(i);
+            target_h2 = h_CC(i);
+            target_mo_ma2 = mo_ma_CC(i);
             break
     end 
 end 
-
-
 %% Ceres-Earth Hohmann Transfer
-
 V_A2 = sqrt(u_O/(a_u*a_2)); % Va in km/s
 V_B2 = sqrt(u_O/(a_u)); % Vb in km/s
 delV_A2 = V_A2 * (((2*a_2/(a_1+a_2))^(1/2))-1); % First Burn in km/s 
@@ -166,7 +136,6 @@ T_22 = sqrt((a_2/a_1)^3); % Orbit Period of Ceres
 S2 = 1/((1/T_12)-(1/T_22)); % Synodic Period
 alpha_pi2 = (((a_1+a_2)/(2*a_1))^(3/2))-1; % time used for wait time in years
 y_w2 = 1:1:5; %iterating years to wait
-
 for i = 1:5
     t_w2 = (y_w(i) - alpha_pi)*S; % wait time on ceres (years)
     if t_w2 <0
@@ -174,11 +143,8 @@ for i = 1:5
     else
         break
     end 
-    
 end 
-
 t_t2 = (2*t_T2) + t_w2; %Total Mission time (years)
-
 %% Ceres Departure 
 a_OCD = []; % Radius + Height (km)
 V_cirCD = []; % Circular Orbit Velo (km/s)
@@ -203,23 +169,18 @@ for i = 1:l_2
     delV_pcCD(i) = 2*V_cirCD(i)*sind(CAI/2);
     delV_pCD(i) = delV_pcCD(i) + delV_DCD(i);
     delV_ppCD(i) = sqrt(((V_cirCD(i))^2)+((V_HCD(i))^2) - (2*V_cirCD(i)*V_HCD(i)*cosd(CAI)));
-    mo_ma_CD(i) = exp((1000*delV_DCD(i))/(g*ISP));
-    
+    mo_ma_CD(i) = exp((1000*delV_DCD(i))/(g*ISP));    
 end 
-
-
 matrix_CD = [constants [h_CD;a_OCD;V_cirCD;e_CD;b_CD;psi_CD;V_HCD;delV_DCD;delV_pcCD;delV_pCD;delV_ppCD;mo_ma_CD]];
-
 for i = 1:l_1
     if min(mo_ma_CD)==mo_ma_CD(i)
-            target_v3 = delV_ppCD(i)
-            target_h3 = h_CD(i)
-            target_mo_ma3 = mo_ma_CD(i)
+            target_v3 = delV_ppCD(i);
+            target_h3 = h_CD(i);
+            target_mo_ma3 = mo_ma_CD(i);
             break
     end 
 end 
 %% Earth Capture- Parameters and Solve
-
 a_OEC = []; % Radius + Height (km)
 V_cirEC = []; % Circular Orbit Velo (km/s)
 a_EC = mu_A/(delV_B2^2); % Semi Major Axis of Ellipse 
@@ -244,46 +205,35 @@ for i = 1:l_1
     delV_pEC(i) = delV_pcEC(i) + delV_DEC(i);
     delV_ppEC(i) = sqrt(((V_cirEC(i))^2)+((V_HEC(i))^2) - (2*V_cirEC(i)*V_HEC(i)*cosd(DPC)));
     mo_ma_EC(i) = exp((1000*delV_DEC(i))/(g*ISP));
-    
 end 
-
 matrix_EC = [constants [h_EC;a_OEC;V_cirEC;e_EC;b_EC;psi_EC;V_HEC;delV_DEC;delV_pcEC;delV_pEC;delV_ppEC;mo_ma_EC]];
-
 for i = 1:l_1
     if min(mo_ma_EC)==mo_ma_EC(i)
-            target_v4 = delV_ppEC(i)
-            target_h4 = h_EC(i)
-            target_mo_ma4 = mo_ma_EC(i)
+            target_v4 = delV_ppEC(i);
+            target_h4 = h_EC(i);
+            target_mo_ma4 = mo_ma_EC(i);
             break
     end 
 end 
-
 %% total Del V 
-
-target_delV = target_v1+target_v2+target_v3+target_v4
-total_mass_fraction = target_mo_ma1*target_mo_ma2*target_mo_ma3*target_mo_ma4
-
-
-
-
+target_delV = target_v1+target_v2+target_v3+target_v4;
+total_mass_fraction = target_mo_ma1*target_mo_ma2*target_mo_ma3*target_mo_ma4;
 %% Calculating Mass
-
 M_d = 167.056; % Dry Mass [MT]
-M_w = total_mass_fraction*M_d %Wet Mass [MT]
-M_p = M_w - M_d % Propellant Mass [MT]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+M_w = total_mass_fraction*M_d; %Wet Mass [MT]
+M_p = M_w - M_d; % Propellant Mass [MT]
+M_P_kg = M_p*1000;
+%% if doing fuel tug
+M_P_half = M_P_kg/2;
+%% Calculating Tank Size (Cylinder)
+liquid_hydrogen = 71; % kg/m^3
+% setting height of tank
+h_tank = 1:1:50; %meters
+volume_tank = M_P_kg/liquid_hydrogen; 
+volume_tank_half = M_P_half/liquid_hydrogen;
+radius_tank = [];
+radius_tank_half = [];
+for i = 1:length(h_tank)
+    radius_tank(i) = sqrt(volume_tank/(pi()*h_tank(i)));
+    radius_tank_half(i) = sqrt(volume_tank_half/(pi()*h_tank(i)));
+end 
