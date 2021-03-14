@@ -4,7 +4,8 @@
 %Ephemeris data given per day
 %Linearly interpolate between days for smaller timesteps
 
-function ephemerides
+%Plots orbits if plot == 1
+function ephemerides = ephemerides()
 
 %Target Body = Earth [Geocenter]
 inputFile = 'earth_ephemeris.csv';
@@ -26,9 +27,18 @@ r_venus = position_vector(inputFile);
 inputFile = 'jupiter_ephemeris.csv';
 r_jupiter = position_vector(inputFile);
 
+ephemerides = vertcat(r_venus,r_earth,r_mars,r_ceres,r_jupiter);
+
 % Plot Results
-figure(1)
-polarplot(r_venus(1,:),r_venus(2,:), r_earth(1,:),r_earth(2,:), r_mars(1,:),r_mars(2,:), r_ceres(1,:),r_ceres(2,:), r_jupiter(1,:),r_jupiter(2,:));
+plot = 1;
+if plot == 1
+    figure(1)
+    polarplot(r_venus(1,:),r_venus(2,:), r_earth(1,:),r_earth(2,:), r_mars(1,:),r_mars(2,:), r_ceres(1,:),r_ceres(2,:), r_jupiter(1,:),r_jupiter(2,:));
+
+    figure (2)
+    [cart_venus_x, cart_venus_y, cart_venus_z] = sph2cart(r_venus(2,:)',r_venus(3,:)',r_venus(1,:)');
+    plot3(cart_venus_x, cart_venus_y, cart_venus_z)
+end
 
 end
 
@@ -36,6 +46,7 @@ end
 function r = position_vector(inputFile)
     %Generate position vector from ephemeris data
     matrix = readmatrix(inputFile);
+    inclination = matrix(:,3);
     eccentricity = matrix(:,1);
     true_anomaly = matrix(:,9);
     semi_major_axis = matrix(:,10);
@@ -47,9 +58,10 @@ function r = position_vector(inputFile)
         a = semi_major_axis(i);
         e = eccentricity(i);
         theta = true_anomaly(i)*(pi/180);% Convert degrees to radians
+        phi = inclination(i)*(pi/180);% Convert degrees to radians
         r(1,i) = theta;
-        r(2,i) = (a*(1-e^2)) / (1+e*cos(theta));
-        
+        r(2,i) = (a*(1-e^2)) / (1+e*cos(theta));% Calculate radius from true anomaly
+        r(3,i) = phi;
     end
     
 end

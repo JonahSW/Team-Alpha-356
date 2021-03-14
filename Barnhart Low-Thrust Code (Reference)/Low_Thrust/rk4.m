@@ -1,7 +1,7 @@
 function yout = rk4(y,dydx,n,x,h,nu,itan)
 %--------------------------------------------------------------------------
 %...4th order Runge-Kutta numerical integration
-%...taken from 'Numerical Recipies in FORTRAN' 2nd Edition, page 706
+%...taken from 'Numerical Recipes in FORTRAN' 2nd Edition, page 706
 hh=h*0.5;
 h6=h/6.0;
 xh=x+hh;
