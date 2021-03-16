@@ -14,3 +14,7 @@ All mission constants (Subsystem mass and power, Solar System constants, etc) sh
 
 =======================================================================================================
 File Directory:
+
+analytical orbits - tools for calculating orbits analytically (elliptic trajectories, plane changes)
+
+numerical orbits - tools for calculating orbits numerically (3 body and restricted 3 body problem)

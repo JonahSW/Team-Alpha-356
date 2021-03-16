@@ -30,19 +30,38 @@ r_jupiter = position_vector(inputFile);
 ephemerides = vertcat(r_venus,r_earth,r_mars,r_ceres,r_jupiter);
 
 % Plot Results
-plot = 1;
-if plot == 1
+animateme = 0;
+if animateme == 1
+   animate(r_ceres, 3); 
+end
+
+plotme = 1;
+if plotme == 1
     figure(1)
     polarplot(r_venus(1,:),r_venus(2,:), r_earth(1,:),r_earth(2,:), r_mars(1,:),r_mars(2,:), r_ceres(1,:),r_ceres(2,:), r_jupiter(1,:),r_jupiter(2,:));
 
-    figure (2)
-    [cart_venus_x, cart_venus_y, cart_venus_z] = sph2cart(r_venus(2,:)',r_venus(3,:)',r_venus(1,:)');
-    plot3(cart_venus_x, cart_venus_y, cart_venus_z)
+    %Generate cartesian coords
+    [venus_x, venus_y, venus_z] = sphere2cart(r_venus(2,:),r_venus(1,:),r_venus(3,:));
+    [earth_x, earth_y, earth_z] = sphere2cart(r_earth(2,:),r_earth(1,:),r_earth(3,:));
+    [mars_x, mars_y, mars_z] = sphere2cart(r_mars(2,:),r_mars(1,:),r_mars(3,:));
+    [ceres_x, ceres_y, ceres_z] = sphere2cart(r_ceres(2,:),r_ceres(1,:),r_ceres(3,:));
+    [jupiter_x, jupiter_y, jupiter_z] = sphere2cart(r_jupiter(2,:),r_jupiter(1,:),r_jupiter(3,:));
+    
+    figure(2)
+    plot3(0,0,0,'*y');%Plot the sun
+    hold on
+    grid minor
+    plot3(venus_x, venus_y, venus_z);
+    plot3(earth_x, earth_y, earth_z);
+    plot3(mars_x, mars_y, mars_z);
+    plot3(ceres_x, ceres_y, ceres_z);
+    plot3(jupiter_x, jupiter_y, jupiter_z);
+    
 end
 
 end
 
-%Supporting Function
+%Supporting Functions
 function r = position_vector(inputFile)
     %Generate position vector from ephemeris data
     matrix = readmatrix(inputFile);
@@ -58,12 +77,28 @@ function r = position_vector(inputFile)
         a = semi_major_axis(i);
         e = eccentricity(i);
         theta = true_anomaly(i)*(pi/180);% Convert degrees to radians
-        phi = inclination(i)*(pi/180);% Convert degrees to radians
+        phi = (inclination(i)*(pi/180))*sin(theta);% Use inclination to find position vector, convert degrees to radians
         r(1,i) = theta;
-        r(2,i) = (a*(1-e^2)) / (1+e*cos(theta));% Calculate radius from true anomaly
+        r(2,i) = (a*(1-e^2)) / (1+e*cos(theta));% Calculate radius from true anomaly and semi-major axis
         r(3,i) = phi;
     end
     
+end
+
+function [x, y, z] = sphere2cart(r,theta,phi)
+    x = r .* cos(phi) .* cos(theta);
+    y = r .* cos(phi) .* sin(theta);
+    z = r .* sin(phi);
+end
+
+function animate(position_vector, fig)%In Progress
+    figure(fig)
+    polarplot(position_vector(1,1),position_vector(2,1));
+    hold on
+    for i = 2:1:length(position_vector)
+       polarplot(position_vector(1,i),position_vector(2,i),'o');       
+    end
+    hold off
 end
 
 %Horizons Tool:

@@ -24,8 +24,8 @@ function [Mratio_A, Mratio_B, deltaV_A, deltaV_B, tT] = elliptic_transfer(a1, a2
     %Results
     deltaV_A = V_A*(sqrt(1+eT)-1);%departure burn deltaV 
     deltaV_B = sqrt(V_B^2 + V_B_prime^2 - 2*V_B*V_B_prime*cos(phi - (pi/2)));
-    Mratio_A = exp(1)^(deltaV_A/(g0*Isp));
-    Mratio_B = exp(1)^(deltaV_B/(g0*Isp));
+    Mratio_A = exp(deltaV_A/(g0*Isp));
+    Mratio_B = exp(deltaV_B/(g0*Isp));
     tT = M*sqrt(a1^3/(mu_sun*(1-eT)^3))*(1/(24*3600));
     
 end

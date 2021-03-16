@@ -130,3 +130,6 @@ dmypy.json
 
 # Mac directory files
 .DS_store
+
+# MATLAB extensions
+.asv
