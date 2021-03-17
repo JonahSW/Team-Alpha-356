@@ -8,5 +8,5 @@ function [Mratio, deltaV] = plane_change(theta,V,Isp)
     g0 = 9.807;%Earth Average gravity [m/s^2]
     
     deltaV = 2*V*sin(theta/2);
-    Mratio = e^(deltaV/(g0/Isp));
+    Mratio = exp(deltaV/(g0*Isp));
 end
