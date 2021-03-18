@@ -13,7 +13,7 @@ earth_ephemeris = read_ephemeris(2);
 ceres_ephemeris = read_ephemeris(4);
 
 %Calculate departure windows for Hohmann Transfers
-[departure_days, departure_dates] = hohmann_window(2,4,0);
+[departure_days, departure_dates] = hohmann_window(2,4,1);
 
 Isp = 950;%Isp for NTP
 

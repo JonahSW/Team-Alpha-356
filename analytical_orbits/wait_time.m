@@ -3,9 +3,14 @@
 %Implements a function that calculates the wait time between hohmann transfers
 
 %a1, a2, are semi major axes of initial and final orbits
-function [t_wait] = wait_time(a1, a2, mu1, mu2)
+function [t_wait] = wait_time(a1, a2)
     mu_sun = 1.32712e20;% Solar Gravitational Parameter [m^3/sec^2]
+    %Convert to m from AU
+    AU = 1.496e11;%AU in m
+    a1 = a1*AU;
+    a2 = a2*AU;
+    %Calculations
     alpha = pi*(((a1+a2)/(2*a1))^(3/2)-1);
-    S = (sqrt(mu1/a1)/(2*pi) - sqrt(mu2/a2)/(2*pi))^-1;%Synodic Period
-    t_wait = (1-(alpha/pi))*S;
+    S = (((2*pi)*sqrt(a1^3/mu_sun))^(-1) - ((2*pi)*sqrt(a2^3/mu_sun))^(-1))^(-1);%Synodic Period
+    t_wait = (2-(alpha/pi))*(S/(24*3600));
 end

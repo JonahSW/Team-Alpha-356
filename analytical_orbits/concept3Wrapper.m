@@ -6,7 +6,7 @@ close all
 clc
 
 %Vehicle Properties
-dry_mass = 90e3;
+dry_mass = 100e3;
 payload_mass = 3e3;
 tank_mass = 4.5e3;
 num_tanks = 3;
@@ -60,6 +60,8 @@ Mratio_NEP_1 = exp((deltaV_1+deltaV_2)/(g0*Isp));%Mass ratio for outbound trajec
 %Low Thrust Estimation - Inbound
 duration2 = low_thrust_estimator((deltaV_3+deltaV_4), Isp, dry_mass, thrust);
 Mratio_NEP_2 = exp((deltaV_3+deltaV_4)/(g0*Isp));%Mass ratio for inbound trajectory
+%Wait Time:
+wait = 30*6;%Currently a very rough estimate
 
 %Spacecraft Mass
 %After burn 2
@@ -72,6 +74,9 @@ m0 = (m1 + 2*tank_mass)*Mratio_NEP_1;
 %Plot Results
 figure()
 plot(1:1:3,[m0,m1,m2],'o');
-hold on
+title('Mass');
+
 disp(['The outbound trajectory duration is ',num2str(duration1),' days'])
+disp(['The wait time at Ceres is ',num2str(wait),' days'])
 disp(['The inbound trajectory duration is ',num2str(duration2),' days'])
+disp(['The total duration is ',num2str(duration1 + wait + duration2),' days'])

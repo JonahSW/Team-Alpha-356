@@ -68,9 +68,9 @@ m1 = (m2 + 3*tank_mass)*Mratio_2;
 m0 = (m1 + 4*tank_mass)*Mratio_1;
 
 %Mission Duration
-duration_outbound = hohmann_duration(a_earth, a_ceres);
-wait = wait_time(a_earth, a_ceres);
-duration_inbound = hohmann_duration(a_earth, a_ceres);
+duration_outbound = 0;
+wait_time = wait_time(a_earth, a_ceres);
+duration_inbound = 0;
 
 %Plot Results
 figure()
@@ -81,6 +81,5 @@ plot(1:1:5,[m0,m1,m2,m3,m4],'o');
 title('Mass');
 
 disp(['The outbound trajectory duration is ',num2str(duration_outbound),' days'])
-disp(['The wait time at Ceres is ',num2str(wait),' days'])
+disp(['The wait time at Ceres is ',num2str(wait_time),' days'])
 disp(['The inbound trajectory duration is ',num2str(duration_outbound),' days'])
-disp(['The total duration is ',num2str(duration_inbound + wait + duration_outbound),' days'])

@@ -44,6 +44,7 @@ if plotme == 1
     plot3(0,0,0,'*y');%Plot the sun
     hold on
     grid minor
+    axis equal
     plot3(venus_x, venus_y, venus_z);
     plot3(earth_x, earth_y, earth_z);
     plot3(mars_x, mars_y, mars_z);

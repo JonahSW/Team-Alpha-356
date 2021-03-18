@@ -90,10 +90,10 @@ m0_NEP = (m1)*Mratio_NEP_1;
 %Mission Duration
 %Hohmann Transfer
 duration_outbound = hohmann_duration(a_earth, a_ceres);
-wait = wait_time(a_earth, a_ceres);
+wait_time = wait_time(a_earth, a_ceres);
 duration_inbound = hohmann_duration(a_earth, a_ceres);
 %Low Thrust Estimation - Outbound
-duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp, dry_mass, thrust_NEP);
+duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp, dry_mass, thrust);
 
 %Plot Results
 figure()
@@ -106,9 +106,7 @@ hold on
 title('Mass');
 plot(1:1:6,[m0_NEP,m1_NEP,m2_NEP,m2_NEP,m2_NEP,m2_NEP],'o');
 
-disp(['The crewed vessel outbound trajectory duration is ',num2str(duration_outbound),' days'])
-disp(['The crewed vessel wait time at Ceres is ',num2str(wait),' days'])
-disp(['The crewed vessel inbound trajectory duration is ',num2str(duration_inbound),' days'])
-disp(['The crewed vessel total mission duration is ',num2str(duration_inbound + wait + duration_outbound),' days'])
-
-disp(['The fuel tug outbound trajectory duration is ',num2str(duration_NEP),' days'])
+disp(['The outbound trajectory duration is ',num2str(duration_NEP),' days'])
+disp(['The wait time at Ceres is ',num2str(wait),' days'])
+disp(['The inbound trajectory duration is ',num2str(duration2),' days'])
+disp(['The total duration is ',num2str(duration_NEP + wait + duration2),' days'])
