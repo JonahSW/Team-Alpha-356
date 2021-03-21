@@ -4,14 +4,15 @@
 %Assumes circular orbits and applies patched conics
 close all
 clc
+clear
 
 %Vehicle Properties
-dry_mass = 100e3;
+dry_mass = 130e3;
 payload_mass = 3e3;
 tank_mass = 4.5e3;
 num_tanks = 3;
 Isp = 4000;
-thrust = 20;
+thrust = 25;
 
 %Inputs:
 ceres_orbit_altitude = 70e3;
@@ -55,13 +56,9 @@ a_end = earth_radius+earth_orbit_altitude;
 [Mratio_4, deltaV_4, psi_4] = hohmann_capture_burn(a_earth, a_ceres, mu_earth, delta, a_end, Isp);
 
 %Low Thrust Estimation - Outbound
-duration1 = low_thrust_estimator((deltaV_1+deltaV_2), Isp, dry_mass, thrust);
 Mratio_NEP_1 = exp((deltaV_1+deltaV_2)/(g0*Isp));%Mass ratio for outbound trajectory
 %Low Thrust Estimation - Inbound
-duration2 = low_thrust_estimator((deltaV_3+deltaV_4), Isp, dry_mass, thrust);
 Mratio_NEP_2 = exp((deltaV_3+deltaV_4)/(g0*Isp));%Mass ratio for inbound trajectory
-%Wait Time:
-wait = 30*6;%Currently a very rough estimate
 
 %Spacecraft Mass
 %After burn 2
@@ -70,6 +67,11 @@ m2 = (dry_mass + 1*tank_mass);
 m1 = (m2 + payload_mass)*Mratio_NEP_2;
 %Before burn 1
 m0 = (m1 + 2*tank_mass)*Mratio_NEP_1;
+
+%Wait Time:
+duration1 = low_thrust_estimator((deltaV_1+deltaV_2), Isp, m0, thrust);
+duration2 = low_thrust_estimator((deltaV_3+deltaV_4), Isp, m1, thrust);
+wait = 30*6;%Currently a very rough estimate
 
 %Plot Results
 figure()

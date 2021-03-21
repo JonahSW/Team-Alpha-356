@@ -17,7 +17,7 @@ ceres_ephemeris = read_ephemeris(4);
 
 Isp = 950;%Isp for NTP
 
-[Mratio_A, Mratio_B, deltaV_A, deltaV_B, tT] = elliptic_transfer(earth_ephemeris(3,912), ceres_ephemeris(3,912), pi, Isp)
+[Mratio_A, Mratio_B, deltaV_A, deltaV_B, tT] = elliptic_transfer(earth_ephemeris(3,912), ceres_ephemeris(3,912), pi, Isp);
 
 %Calculate Mass Ratios and deltaVs for each launch window
 half_window_width = 7;% Days on either side of launch window [days]

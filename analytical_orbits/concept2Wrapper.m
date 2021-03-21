@@ -4,6 +4,7 @@
 %Assumes circular orbits and applies patched conics
 close all
 clc
+clear
 
 %Vehicle Properties
 dry_mass_crewed = 90e3;
@@ -18,7 +19,7 @@ num_NEP_tanks_tug = 2;
 
 Isp_NTP = 950;
 Isp_NEP = 4000;
-thrust_NEP = 20;
+thrust_NEP = 25;
 
 %Inputs:
 ceres_orbit_altitude = 70e3;
@@ -60,10 +61,6 @@ delta = 0.9*(in_earth+in_ceres);% 90% of heliocentric plane change is done at Ea
 a_end = earth_radius+earth_orbit_altitude;
 [Mratio_4, deltaV_4, psi_4] = hohmann_capture_burn(a_earth, a_ceres, mu_earth, delta, a_end, Isp_NTP);
 
-%Low Thrust Estimation (Outbound fuel tug)
-duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp_NEP, dry_mass_tug, thrust_NEP);
-Mratio_NEP_1 = exp((deltaV_1+deltaV_2)/(g0*Isp_NEP));
-
 %Spacecraft Mass
 %Crewed Vessel
 %After burn4
@@ -80,6 +77,7 @@ m1 = (m2 + 2*tank_mass_NTP)*Mratio_2;
 m0 = (m1)*Mratio_1;
 
 %Fuel Tug
+Mratio_NEP_1 = exp((deltaV_1+deltaV_2)/(g0*Isp_NEP));
 %End
 m2_NEP = (dry_mass_tug + 2*tank_mass_NEP + payload_mass_tug);
 %After burn 1
@@ -93,7 +91,7 @@ duration_outbound = hohmann_duration(a_earth, a_ceres);
 wait = wait_time(a_earth, a_ceres);
 duration_inbound = hohmann_duration(a_earth, a_ceres);
 %Low Thrust Estimation - Outbound
-duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp, dry_mass, thrust_NEP);
+duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp_NEP, m0_NEP, thrust_NEP);
 
 %Plot Results
 figure()
