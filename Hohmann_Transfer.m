@@ -229,6 +229,7 @@ M_p_second = M_w_second - M_d;
 M_P_first_kg = M_p_first*1000;
 M_P_second_kg = M_p_second*1000;
 %% Calculating Temp as a function of Distance from the Sun 
+
 T_s = 5800; %temperature of the sun in K
 R_s = 0.7E9; %Radius of the sun
 distance_C = a_2 * a_u; % in km
@@ -255,7 +256,7 @@ viscosity_hydrogen = ((137E6)/10); % gram/cm sec 10^6 -> kg/m sec
 C_p = 9.58*1000; %J/kg*k
 kinematic_viscosity_hydrogen = viscosity_hydrogen/liquid_hydrogen;
 % setting height of tank
-r_tank = 5; %meters
+r_tank = 4.5; %meters
 number_of_tanks = 3;
 volume_tank_first = (M_P_first_kg/liquid_hydrogen)/number_of_tanks; 
 volume_tank_second = (M_P_second_kg/liquid_hydrogen)/number_of_tanks; 
@@ -265,20 +266,32 @@ h_tank_second = volume_tank_second/(pi()*r_tank^2);
 surface_area = 3*(2*pi()*r_tank*h_tank_first)+(2*pi()*(r_tank^2));
 
 %% Calculating Thickness of Tank (Based on Aluminum 7075)
+storing_pressure1 = []; 
+BOM = [];
+q_dprime_conduction = [];
+q_dprime_convection = [];
+q_dprime_radiation = [];
+q_tot = [];
+R = [];
+F_g = [];
+Ra = [];
+Nu = [];
+h = [];
+molar_mass = [];
+pressure_gas = [];
+
 yield_stress = 4.61E8; %Pa
 density_A = 2.8E3; %kg/m^3
 SF = 2.5; 
 alpha = 23.2E-6; % 1/C
 stress_SF = SF*yield_stress;
 storing_pressure = 101325; 
+
 thickness = ((storing_pressure)*(r_tank*2)*10)/(2*stress_SF); %10 for sanity
 thickness_mm = thickness * 1000;
-
 volume_tank = pi()*(h_tank_first+thickness)*(((r_tank+thickness)^2)-((r_tank)^2));
-
 tank_weight = density_A*volume_tank;
 
-%% Calculating Boiloff 
 k_A = 190; % W/m
 k_liquid_hydrogen = 102/1000; %W/mK
 thermal_diffusivity = k_liquid_hydrogen/(liquid_hydrogen*C_p);
@@ -287,36 +300,43 @@ Temp_1 = T_1_c + 273.15; %T_1 in Kelvin
 number_of_layers = 20; % MLI half inch thick
 thickness_of_MLI = 20*0.5*(1/39.37);
 S_B_C = 5.670E-8; %stefan Boltzmann Constant W/m^2K^4
-R = [];
-q_dprime_conduction = [];
-q_dprime_convection = [];
-q_dprime_radiation = [];
-q_tot = [];
+G = 6.67430E-11;
 
 mass_earth = 5.972E24;
 mass_ceres = 9.1E20;
+latent_heat_evap_hydrogen = 461; %KJ/kg
+%% Calculating Boiloff 
+for n = 1:length(R_s_p)
+    for k = 1:length(R_s_p)
+        F_g(k) = (G* (M_w_first*1000))/(R_s_p(k)^2);
+        Ra(k) = (alpha*(Temp_2(k)-Temp_1)*(h_tank_first)*F_g(k))/(kinematic_viscosity_hydrogen*thermal_diffusivity);
+        if Ra(k)<= 1E7
+            Nu(k) = 0.642*((Ra(k))^(1/6));
+        elseif Ra(k)<1E7 && Ra(k)<=1E10
+            Nu(k) = 0.167*((Ra(k))^(1/4));
+        else 
+            Nu(k) = 0.00053*((Ra(k))^(1/2));
+        end
+        h(k) = (k_liquid_hydrogen/h_tank_first)*Nu(k);
+        R(k) = (thickness/k_A)+(thickness_of_MLI/k_mli(k));
+        q_dprime_conduction(k) = -(Temp_1-Temp_2(k))/R(k);
+        q_dprime_convection(k) = -h(k)*(Temp_1-Temp_2(k)); % not including space convection, dont know if that adds anything else
+        q_dprime_radiation(k) = -emissivity_MLI(k)*S_B_C*((Temp_1)^4 - (Temp_2(k))^4);
+        q_tot(k) = surface_area*(q_dprime_conduction(k)+q_dprime_convection(k)+q_dprime_radiation(k));
+    end 
 
-G = 6.67430E-11;
-F_g = [];
-Ra = [];
-Nu = [];
-h = [];
-for k = 1:length(R_s_p)
-    F_g(k) = (G* (M_w_first*1000))/(R_s_p(k)^2);
-    Ra(k) = (alpha*(Temp_2(k)-Temp_1)*(h_tank_first)*F_g(k))/(kinematic_viscosity_hydrogen*thermal_diffusivity);
-    if Ra(k)<= 1E7
-        Nu(k) = 0.642*((Ra(k))^(1/6));
-    elseif Ra(k)<1E7 && Ra(k)<=1E10
-        Nu(k) = 0.167*((Ra(k))^(1/4));
-    else 
-        Nu(k) = 0.00053*((Ra(k))^(1/2));
-    end
-    h(k) = (k_liquid_hydrogen/h_tank_first)*Nu(k);
-    R(k) = (thickness/k_A)+(thickness_of_MLI/k_mli(k));
-    q_dprime_conduction(k) = -(Temp_1-Temp_2(k))/R(k);
-    q_dprime_convection(k) = -h(k)*(Temp_1-Temp_2(k)); % not including space convection, dont know if that adds anything else
-    q_dprime_radiation(k) = -emissivity_MLI(k)*S_B_C*((Temp_1)^4 - (Temp_2(k))^4);
-    q_tot(k) = surface_area*(q_dprime_conduction(k)+q_dprime_convection(k)+q_dprime_radiation(k));
+    for k = 1:length(R_s_p)
+        BOM(k) = q_tot(k)/latent_heat_evap_hydrogen; % kg
+    end 
+
+    pressure_gas(n) = (BOM(n)* 287 * Temp_1)/volume_tank;
+    storing_pressure1 = [storing_pressure pressure_gas];
+
+    storing_pressure = storing_pressure + pressure_gas(n);
+    thickness = ((storing_pressure)*(r_tank*2)*10)/(2*stress_SF); %10 for sanity
+    thickness_mm = thickness * 1000;
+    volume_tank = pi()*(h_tank_first+thickness)*(((r_tank+thickness)^2)-((r_tank)^2));
+    tank_weight = density_A*volume_tank;
 end 
 
 figure(2)
@@ -324,20 +344,16 @@ plot(Ra,Nu)
 xlabel('Ra')
 ylabel('Nu')
 
-
-latent_heat_evap_hydrogen = 461; %KJ/kg
-BOM = [];
-for k = 1:length(R_s_p)
-    BOM(k) = q_tot(k)/latent_heat_evap_hydrogen; % kg
-end 
-
 figure(3)
 plot(R_s_p,BOM)
 xlabel('R_{sp}')
 ylabel('BOM')
 
-Boil_off_mass = sum(BOM) %kg
-BOM_mt = Boil_off_mass/1000 %MT
+
+Boil_off_mass = sum(BOM); %kg
+
+
+BOM_mt = Boil_off_mass/1000; %MT
 
 %% Accounting for the Boil Off Mass of Liquid Hydrogen
 M_P_TOT = M_p_first + BOM_mt
