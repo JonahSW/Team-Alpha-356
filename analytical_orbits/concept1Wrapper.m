@@ -72,13 +72,17 @@ duration_outbound = hohmann_duration(a_earth, a_ceres);
 wait = wait_time(a_earth, a_ceres);
 duration_inbound = hohmann_duration(a_earth, a_ceres);
 
-%Plot Results
+%% Plot Results
 figure()
 plot(1:1:4,[deltaV_1,deltaV_2,deltaV_3,deltaV_4],'o');
-title('Delta V');
+title('Delta V For Each Burn');
+xlabel('Burn Number');
+ylabel('Delta V (m/s)');
+
 figure()
 plot(1:1:5,[m0,m1,m2,m3,m4],'o');
 title('Mass');
+ylabel('Mass (kg)');
 
 disp(['The outbound trajectory duration is ',num2str(duration_outbound),' days'])
 disp(['The wait time at Ceres is ',num2str(wait),' days'])

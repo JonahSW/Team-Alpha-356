@@ -93,7 +93,7 @@ duration_inbound = hohmann_duration(a_earth, a_ceres);
 %Low Thrust Estimation - Outbound
 duration_NEP = low_thrust_estimator((deltaV_1+deltaV_2), Isp_NEP, m0_NEP, thrust_NEP);
 
-%Plot Results
+%% Plot Results
 figure()
 plot(1:1:4,[Mratio_1,Mratio_2,Mratio_3,Mratio_4]);
 title('Mass Ratio');

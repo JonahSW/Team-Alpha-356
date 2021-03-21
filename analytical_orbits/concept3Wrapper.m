@@ -73,7 +73,7 @@ duration1 = low_thrust_estimator((deltaV_1+deltaV_2), Isp, m0, thrust);
 duration2 = low_thrust_estimator((deltaV_3+deltaV_4), Isp, m1, thrust);
 wait = 30*6;%Currently a very rough estimate
 
-%Plot Results
+%% Plot Results
 figure()
 plot(1:1:3,[m0,m1,m2],'o');
 title('Mass');
