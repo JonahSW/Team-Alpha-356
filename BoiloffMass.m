@@ -1,4 +1,4 @@
-function [BOM_mt,BOM_rate] = BoiloffMass(t_T,a_2,r_tank,number_of_tanks,total_mass_fraction_first,M_d)
+function [BOM_mt, BOM_rate] = BoiloffMass(t_T,a_2,r_tank,number_of_tanks,total_mass_fraction_first,M_d)
 %mdp81
 %% Inputs
 % t_T: Transfer Time (years)
@@ -113,7 +113,7 @@ for n = 1:length(R_s_p)
     Temp_saturation(n) = 1/((1/Temp_1) - ((287*log(storing_pressure/storing_pressure_first))/(latent_heat_evap_hydrogen)));
     pressure_gas_vap(n) = (287*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first)-storing_pressure_first;
     pressure_gas(n) = (287*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first);
-    if storing_pressure>=4*storing_pressure_first
+    if storing_pressure>=storing_pressure_first
         storing_pressure = storing_pressure_first;
     else 
         storing_pressure = pressure_gas(n);
@@ -122,35 +122,33 @@ for n = 1:length(R_s_p)
     Temp_boiloff(n) = ((volume_gas(n)*pressure_gas(n))/C_p)-Temp_saturation(n);
     BOM(n) = (pressure_gas_vap(n)*volume_gas(n))/(287*Temp_boiloff(n));
 end 
-
-
+BOM_important = BOM(30:length(R_s_p));
 time_start = time_vector(1);
 new_time = [];
 for j = 1:length(R)
     new_time(j) = time_start + time_vector(j);
 end 
-
-BOM_rate = [];
-for j = 1:length(R)
-    BOM_rate(j) = BOM(j)/new_time(j);
-end 
-
+time_important = new_time(30:length(R_s_p));
+BOM_Rate= real(BOM_important./time_important);
+BOM_rate = mean(BOM_Rate);
+Distance = distance_from_sun((30:length(R_s_p)));
+R_S_P = (a_u*1000)*(R_s_p((30:length(R_s_p))));
 limit = ((R_s_p(30))/(a_u*1000));
-% figure(2)
-% plot(Ra,Nu)
-% xlabel('Ra')
-% ylabel('Nu')
-% figure(3)
-% plot((R_s_p/(a_u*1000)),BOM)
-% xlabel('R_{sp}')
-% ylabel('BOM')
-% xlim([limit t_T])
-% figure(4)
-% plot(time_sum/3.154E7,BOM_rate)
-% xlabel('Time (years)')
-% ylabel('BOM Rate')
-% xlim([limit t_T])
-Boil_off_mass = real(sum(BOM)); %kg
+figure(2)
+plot(R_S_P,BOM_Rate)
+xlabel('R_{sp}')
+ylabel('BOM rate')
+xlim([limit t_T])
+figure(3)
+yyaxis left
+plot(time_important/3.154E7,BOM_important)
+ylabel('BOM')
+hold on 
+yyaxis right
+plot(time_important/3.154E7,Distance)
+ylabel('Distance (m)')
+xlabel('Time (years)')
+Boil_off_mass = real(sum(BOM_important)); %kg
 BOM_mt = Boil_off_mass/1000; %MT
 %% Accounting for the Boil Off Mass of Liquid Hydrogen
 M_P_TOT = M_p_first + BOM_mt;
@@ -159,9 +157,4 @@ M_P_per_tank = M_P_TOT/number_of_tanks;
 BOM_mt_pertank = BOM_mt/number_of_tanks;
 volume_tank_BOM = ((M_P_TOT*1000)/liquid_hydrogen)/number_of_tanks; 
 h_tank_first_BOM = volume_tank_BOM/(pi()*r_tank^2);
-figure(5)
-plot(new_time/3.154E7,BOM)
-xlabel('Time (years)')
-ylabel('BOM')
-xlim([limit t_T])
 end 
