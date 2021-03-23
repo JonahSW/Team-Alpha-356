@@ -20,19 +20,21 @@ distance_C = a_2 * a_u; % in km
 distance_C_m = distance_C*1000;
 distance_E_m = a_u *1000;
 R_s_p = distance_E_m:100000000:distance_C_m;
-Temp_2 = [];
-emissivity_MLI = [];
-k_mli = [];
-for k = 1:length(R_s_p)
-    Temp_2(k) = T_s*sqrt(R_s/(2*R_s_p(k)));
-    emissivity_MLI(k) = (6.8E-4)*(Temp_2(k)^(0.67)); % assumed to be the same for all number of layers
-    k_mli(k) = (1E-5)*(Temp_2(k)) ; %MLI conductivity 10^-5 W/mK
-end 
-figure(1)
-plot(R_s_p,Temp_2)
-xlabel('R_{sp}')
-ylabel('T_2')
-title('Temperature as a function of distance away from the Sun')
+Temp_2 = 2.7; %k
+emissivity_MLI = (6.8E-4)*(Temp_2^(0.67)); % assumed to be the same for all number of layers
+k_mli = (1E-5)*(Temp_2) ; %MLI conductivity 10^-5 W/mK
+
+%Solar Constants
+T_sun = 5772; %temperature of the sun in K
+R_sun = 6.957e8; %Solar Equatorial Radius (m)
+sigma = 5.67037e-8;% Stefan-Boltzmann Constant (W/m^2*K^4)
+solar_surface_flux = sigma*T_sun^4; % Solar Radiation Flux at surface W/m2
+solar_constant = 1.3608e3; % Solar Constant (W/m2) <- solar radiation flux at 1 AU
+
+AU = 1.496e11;%AU in m
+distance_from_sun = AU:(((a_2*AU)-AU)/2650):a_2*AU;
+
+solar_flux = solar_surface_flux*(R_sun./distance_from_sun).^2;
 %% Calculating Tank Size (Cylinder)
 M_P_first_kg = M_p_first *1000; 
 liquid_hydrogen = 71; % kg/m^3
@@ -93,7 +95,7 @@ Temp_boiloff = [];
 for n = 1:length(R_s_p)
     for k = 1:length(R_s_p)
         F_g(k) = (G* (M_w_first*1000))/(R_s_p(k)^2);
-        Ra(k) = (alpha*(Temp_2(k)-Temp_1)*(h_tank_first)*F_g(k))/(kinematic_viscosity_hydrogen*thermal_diffusivity);
+        Ra(k) = (alpha*(Temp_2-Temp_1)*(h_tank_first)*F_g(k))/(kinematic_viscosity_hydrogen*thermal_diffusivity);
         if Ra(k)<= 1E7
             Nu(k) = 0.642*((Ra(k))^(1/6));
         elseif Ra(k)<1E7 && Ra(k)<=1E10
@@ -102,11 +104,11 @@ for n = 1:length(R_s_p)
             Nu(k) = 0.00053*((Ra(k))^(1/2));
         end
         h(k) = (k_liquid_hydrogen/h_tank_first)*Nu(k);
-        R(k) = (thickness/k_A)+(thickness_of_MLI/k_mli(k));
-        q_dprime_conduction(k) = -(Temp_1-Temp_2(k))/R(k);
-        q_dprime_convection(k) = -h(k)*(Temp_1-Temp_2(k)); % not including space convection, dont know if that adds anything else
-        q_dprime_radiation(k) = -emissivity_MLI(k)*S_B_C*((Temp_1)^4 - (Temp_2(k))^4);
-        q_tot(k) = surface_area*(q_dprime_conduction(k)+q_dprime_convection(k)+q_dprime_radiation(k));
+        R(k) = (thickness/k_A)+(thickness_of_MLI/k_mli);
+        q_dprime_conduction(k) = -(Temp_1-Temp_2)/R(k);
+        q_dprime_convection(k) = -h(k)*(Temp_1-Temp_2); % not including space convection, dont know if that adds anything else
+        q_dprime_radiation(k) = -emissivity_MLI*S_B_C*((Temp_1)^4 - (Temp_2)^4);
+        q_tot(k) = surface_area*(q_dprime_conduction(k)+q_dprime_convection(k)+q_dprime_radiation(k)+solar_flux(k));
     end 
     Temp_saturation(n) = 1/((1/Temp_1) - ((287*log(storing_pressure/storing_pressure_first))/(latent_heat_evap_hydrogen)));
     pressure_gas_vap(n) = (287*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first)-storing_pressure_first;
@@ -121,35 +123,34 @@ for n = 1:length(R_s_p)
     BOM(n) = (pressure_gas_vap(n)*volume_gas(n))/(287*Temp_boiloff(n));
 end 
 
-BOM_important = BOM(30:length(R_s_p));
+
 time_start = time_vector(1);
 new_time = [];
-for j = 1:length(time_vector)
+for j = 1:length(R)
     new_time(j) = time_start + time_vector(j);
 end 
 
-time_sum = new_time(30:length(R_s_p));
 BOM_rate = [];
-for j = 1:length(time_sum)
-    BOM_rate(j) = BOM_important(j)/time_sum(j);
+for j = 1:length(R)
+    BOM_rate(j) = BOM(j)/new_time(j);
 end 
 
 limit = ((R_s_p(30))/(a_u*1000));
-figure(2)
-plot(Ra,Nu)
-xlabel('Ra')
-ylabel('Nu')
-figure(3)
-plot((R_s_p/(a_u*1000)),BOM)
-xlabel('R_{sp}')
-ylabel('BOM')
-xlim([limit t_T])
-figure(4)
-plot(time_sum/3.154E7,BOM_rate)
-xlabel('Time (years)')
-ylabel('BOM_rate')
-xlim([limit t_T])
-Boil_off_mass = sum(BOM_important); %kg
+% figure(2)
+% plot(Ra,Nu)
+% xlabel('Ra')
+% ylabel('Nu')
+% figure(3)
+% plot((R_s_p/(a_u*1000)),BOM)
+% xlabel('R_{sp}')
+% ylabel('BOM')
+% xlim([limit t_T])
+% figure(4)
+% plot(time_sum/3.154E7,BOM_rate)
+% xlabel('Time (years)')
+% ylabel('BOM Rate')
+% xlim([limit t_T])
+Boil_off_mass = real(sum(BOM)); %kg
 BOM_mt = Boil_off_mass/1000; %MT
 %% Accounting for the Boil Off Mass of Liquid Hydrogen
 M_P_TOT = M_p_first + BOM_mt;
@@ -158,4 +159,9 @@ M_P_per_tank = M_P_TOT/number_of_tanks;
 BOM_mt_pertank = BOM_mt/number_of_tanks;
 volume_tank_BOM = ((M_P_TOT*1000)/liquid_hydrogen)/number_of_tanks; 
 h_tank_first_BOM = volume_tank_BOM/(pi()*r_tank^2);
+figure(5)
+plot(new_time/3.154E7,BOM)
+xlabel('Time (years)')
+ylabel('BOM')
+xlim([limit t_T])
 end 
