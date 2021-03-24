@@ -1,0 +1,12 @@
+
+%Solar Constants
+T_sun = 5772; %temperature of the sun in K
+R_sun = 6.957e8; %Solar Equatorial Radius (m)
+sigma = 5.67037e-8;% Stefan-Boltzmann Constant (W/m^2*K^4)
+solar_surface_flux = sigma*T_sun^4; % Solar Radiation Flux at surface W/m2
+solar_constant = 1.3608e3; % Solar Constant (W/m2) <- solar radiation flux at 1 AU
+
+AU = 1.496e11;%AU in m
+distance_from_sun = AU:(((a_2*AU)-AU)/2650):a_2*AU;
+
+solar_flux = solar_surface_flux*(R_sun./distance_from_sun).^2;
