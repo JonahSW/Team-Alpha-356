@@ -2,7 +2,7 @@
 %03/16/2021
 %Implements a function that can calculate the departure date window for a hohmann transfer
 %Returns an array of possible departure days as both indexes (days from 01/01/2040) and dates
-
+%1 is Venus, 2 is Earth, 3 is Mars, 4 is Ceres, 5 in Jupiter
 function [departure_days, departure_dates] = hohmann_window(body1,body2, plotme)
     
     %Internally Defined Constants
@@ -23,7 +23,7 @@ function [departure_days, departure_dates] = hohmann_window(body1,body2, plotme)
     num_windows = 1;
     for i = 1:1:length(a1)
         L12(i) = pi*(1-((a1(i)+a2(i))/(2*a2(i)))^(3/2));
-        dtheta(i) = theta1(i) - theta2(i);
+        dtheta(i) = theta2(i) - theta1(i);
         if (dtheta(i) > (L12(i)-L12(i)*0.01)) & (dtheta(i) < (L12(i)+L12(i)*0.01))
             departure_days(num_windows) = i;
             %disp('Found One!');

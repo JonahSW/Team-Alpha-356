@@ -32,16 +32,26 @@ User subfunctions required: rates, plotit
 clear
 close all
 clc
+%Constants
+AU = 149597870.7;%[km]
+m_earth = 5.972e24;%[kg]
+m_ceres = 9.3835e20;%[kg]
+m_sun = 1.98847e30;%[kg]
+m_spacecraft = 300e3;%[kg]
+n_years = 3.5;
+t_final = n_years*365.25*24*3600;%[s]
+NEP_thrust = 60e-8;% [MN]
+
 G = 6.67259e-20;
 %...Input data:
-m1 = 1.e29; m2 = 1.e29; m3 = 1.e29;
-t0 = 0; tf = 67000;
+m1 = m_sun; m2 = m_earth; m3 = m_spacecraft;
+t0 = 0; tf = t_final;
 X1 = 0; Y1 = 0;
-X2 = 300000; Y2 = 0;
-X3 = 2*X2; Y3 = 0;
+X2 = AU; Y2 = 0;
+X3 = 0; Y3 = AU;
 VX1 = 0; VY1 = 0;
-VX2 = 250; VY2 = 250;
-VX3 = 0; VY3 = 0;
+VX2 = 0; VY2 = 29.8;
+VX3 = -29.8; VY3 = 0;
 %...End input data
 m = m1 + m2 + m3;
 y0 = [X1 Y1 X2 Y2 X3 Y3 VX1 VY1 VX2 VY2 VX3 VY3]';
@@ -103,12 +113,14 @@ R12 = norm([X2 - X1, Y2 - Y1]) ^3;
 R13 = norm([X3 - X1, Y3 - Y1]) ^3;
 R23 = norm([X3 - X2, Y3 - Y2]) ^3;
 %...Equations C.9:
+%...Add acceleration components for each mass
 AX1 = G*m2*(X2 - X1)/R12 + G*m3*(X3 - X1)/R13;
 AY1 = G*m2*(Y2 - Y1)/R12 + G*m3*(Y3 - Y1)/R13;
 AX2 = G*m1*(X1 - X2)/R12 + G*m3*(X3 - X2)/R23;
 AY2 = G*m1*(Y1 - Y2)/R12 + G*m3*(Y3 - Y2)/R23;
-AX3 = G*m1*(X1 - X3)/R13 + G*m2*(X2 - X3)/R23;
-AY3 = G*m1*(Y1 - Y3)/R13 + G*m2*(Y2 - Y3)/R23;
+theta = atan(Y3/X3);
+AX3 = G*m1*(X1 - X3)/R13 + G*m2*(X2 - X3)/R23 + NEP_thrust*sin(theta);
+AY3 = G*m1*(Y1 - Y3)/R13 + G*m2*(Y2 - Y3)/R23 + NEP_thrust*cos(theta);
 dydt = [VX1 VY1 VX2 VY2 VX3 VY3 AX1 AY1 AX2 AY2 AX3 AY3]';
 end %rates
 % wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

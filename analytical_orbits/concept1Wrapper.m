@@ -7,11 +7,14 @@ clc
 clear
 
 %Vehicle Properties
-dry_mass = 90e3;
-payload_mass = 3e3;
-tank_mass = 9e3;
-num_tanks = 7;
+dry_mass = 86.7e3;
+payload_mass = 4e3;
+tank_mass = 8.55e3;
+num_tanks = 11;
 Isp = 950;
+boil_off_mass_transfer = 6e3;%90.66e3;%Boil off for 1/2 Hohmann transfer
+boil_off_mass_LEO = 9e3;%482.11e3;
+boil_off_mass_Ceres = 1e3;%112.55e3;
 
 %Inputs:
 ceres_orbit_altitude = 70e3;
@@ -59,13 +62,14 @@ a_end = earth_radius+earth_orbit_altitude;
 %After burn4
 m4 = (dry_mass + 1*tank_mass);
 %After burn3
-m3 = (m4 + 2*tank_mass)*Mratio_4;
+m3 = (m4 + 2*tank_mass)*Mratio_4 + boil_off_mass_transfer;
 %After burn2
-m2 = (m3 + 2*tank_mass + payload_mass)*Mratio_3;
+m2 = (m3 + 3*tank_mass + payload_mass)*Mratio_3 + (boil_off_mass_Ceres + boil_off_mass_transfer);
 %After burn1
-m1 = (m2 + 3*tank_mass)*Mratio_2;
+m1 = (m2 + 5*tank_mass)*Mratio_2;
 %Initial
-m0 = (m1 + 4*tank_mass)*Mratio_1;
+m0 = (m1)*Mratio_1 + boil_off_mass_LEO;
+%11 Tanks are required
 
 %Mission Duration
 duration_outbound = hohmann_duration(a_earth, a_ceres);
@@ -82,7 +86,15 @@ ylabel('Delta V (m/s)');
 figure()
 plot(1:1:5,[m0,m1,m2,m3,m4],'o');
 title('Mass');
+grid minor
 ylabel('Mass (kg)');
+xline(1,'-','LEO Assembly Mass');
+xline(2,'-','After Earth Departure Burn');
+xline(3,'-','After Ceres Capture Burn');
+xline(4,'-','After Ceres Departure Burn');
+xline(5,'-','After Earth Capture Burn','LabelHorizontalAlignment','left');
+
+%yline(solar_constant,'-','Solar Constant');
 
 disp(['The outbound trajectory duration is ',num2str(duration_outbound),' days'])
 disp(['The wait time at Ceres is ',num2str(wait),' days'])

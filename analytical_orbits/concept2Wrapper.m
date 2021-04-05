@@ -7,19 +7,22 @@ clc
 clear
 
 %Vehicle Properties
-dry_mass_crewed = 90e3;
-dry_mass_tug = 60e3;
-payload_mass_crewed = 1e3;
-payload_mass_tug = 2e3;
-tank_mass_NTP = 9e3;
-tank_mass_NEP = 4.5e3;
-num_NTP_tanks_crewed = 3;
-num_NTP_tanks_tug = 3;
+dry_mass_crewed = 68.5e3;
+dry_mass_tug = 178.58e3;
+payload_mass_crewed = 500;
+payload_mass_tug = 4e3;%Payload that can be abandoned
+tank_mass_NTP = 8.55e3;
+tank_mass_NEP = 2.43e3;
+num_NTP_tanks_crewed = 2;
+num_NTP_tanks_tug = 2;
 num_NEP_tanks_tug = 2;
+boil_off_mass_transfer = 6e3;%32.06e3;%Boil off for 1/2 Hohmann transfer
+boil_off_mass_LEO = 7e3;%55e3;
+boil_off_mass_Ceres = 1e3;%39e3;
 
 Isp_NTP = 950;
 Isp_NEP = 4000;
-thrust_NEP = 25;
+thrust_NEP = 80.1;
 
 %Inputs:
 ceres_orbit_altitude = 70e3;
@@ -66,24 +69,24 @@ a_end = earth_radius+earth_orbit_altitude;
 %After burn4
 m5 = (dry_mass_crewed + 1*tank_mass_NTP + payload_mass_crewed);
 %After burn3
-m4 = (m5 + 2*tank_mass_NTP)*Mratio_4;
+m4 = (m5 + 1*tank_mass_NTP + boil_off_mass_transfer)*Mratio_4;
 %After Resupply
-m3 = (m4)*Mratio_3;
+m3 = (m4 + boil_off_mass_Ceres)*Mratio_3;
 %After burn2
-m2 = (dry_mass_crewed + 1*tank_mass_NTP + payload_mass_crewed);
+m2 = (dry_mass_crewed + 1*tank_mass_NTP + payload_mass_crewed + boil_off_mass_transfer);
 %After burn1
-m1 = (m2 + 2*tank_mass_NTP)*Mratio_2;
+m1 = (m2 + 1*tank_mass_NTP)*Mratio_2;
 %Initial
-m0 = (m1)*Mratio_1;
+m0 = (m1 + boil_off_mass_LEO)*Mratio_1;
 
 %Fuel Tug
 Mratio_NEP_1 = exp((deltaV_1+deltaV_2)/(g0*Isp_NEP));
 %End
-m2_NEP = (dry_mass_tug + 2*tank_mass_NEP + payload_mass_tug);
+m2_NEP = (dry_mass_tug + 2*tank_mass_NEP);
 %After burn 1
-m1_NEP = (dry_mass_tug + 2*tank_mass_NEP + payload_mass_tug + 3*tank_mass_NTP);
+m1_NEP = (dry_mass_tug + payload_mass_tug + 2*tank_mass_NTP + boil_off_mass_Ceres + ((m4-m5) + (m3-m4)));
 %Initial
-m0_NEP = (m1)*Mratio_NEP_1;
+m0_NEP = (m1_NEP + boil_off_mass_transfer)*Mratio_NEP_1;
 
 %Mission Duration
 %Hohmann Transfer
@@ -101,12 +104,21 @@ title('Mass Ratio');
 figure()
 plot(1:1:6,[m0,m1,m2,m3,m4,m5],'o');
 hold on
+grid minor
 title('Mass');
 plot(1:1:6,[m0_NEP,m1_NEP,m2_NEP,m2_NEP,m2_NEP,m2_NEP],'o');
+xline(1,'-','LEO Assembly Mass');
+xline(2,'-','After Earth Departure Burn');
+xline(3,'-','After Ceres Capture Burn');
+xline(4,'-','After Fuel Transfer');
+xline(5,'-','After Ceres Departure Burn');
+xline(6,'-','After Earth Capture Burn','LabelHorizontalAlignment','left');
+ylabel('Mass (kg)');
+legend('Crewed Vehicle','Fuel Tug');
 
 disp(['The crewed vessel outbound trajectory duration is ',num2str(duration_outbound),' days'])
 disp(['The crewed vessel wait time at Ceres is ',num2str(wait),' days'])
 disp(['The crewed vessel inbound trajectory duration is ',num2str(duration_inbound),' days'])
-disp(['The crewed vessel total mission duration is ',num2str(duration_inbound + wait + duration_outbound),' days'])
+disp(['The crewed vessel total mission duration is ',num2str(duration_inbound + wait + duration_outbound),' days, or ',num2str((duration_inbound + wait + duration_outbound)/365.25),' years'])
 
-disp(['The fuel tug outbound trajectory duration is ',num2str(duration_NEP),' days'])
+disp(['The fuel tug outbound trajectory duration is ',num2str(duration_NEP),' days, or ',num2str((duration_NEP)/365.25),' years'])

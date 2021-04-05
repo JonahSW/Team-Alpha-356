@@ -1,0 +1,19 @@
+    0       = itan (=0 circumferential, =-1 tangential, =>0 vectored, deg)
+    -0.00092   = nu (T/m in terms of g at initial orbit) (nu = (T/m)(r0^2/mu)) [0.00092*2e5/(6778^2/(1e3*398600)) = 1.5964N]
+    0.0     = x1 (initial time tau(0), usually 0)
+    2.7371e+03      = x2 (final time tau for thrusting) (tau = t*sqrt(mu/r0^3)) [28*24*3600*sqrt(398600/6778.0^3) = 2.7371e+03]
+    0     = x3 (additional time tau for zero-thrust coasting)
+    0.01    = h (time step for integration, delta_tau)
+   10       = iprt (integer time step count between printouts)
+    4       = n (number of equations to solve)
+    0.0     = y(1) (i.c. rho'(0)=0)
+    1.0     = y(2) (i.c. rho(0)=1)
+    1.0     = y(3) (i.c. theta'(0)=1)
+    0.0     = y(4) (i.c. theta(0)=0)
+    925000    = r0 (initial orbit radius, km) (earth's SOI, km)
+    2e5  = m (initial spacecraft mass, kg)
+    398600  = mu (earth gravitational parameter, km3/s2)
+    7500  = r_final (target orbit radius) (600km capture altitude + 6378.0km radius)
+    0.0081 = rho (r_target/r0)
+
+    

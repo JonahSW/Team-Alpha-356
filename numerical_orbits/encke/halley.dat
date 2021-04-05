@@ -1,0 +1,27 @@
+calendar date of perihelion passage
+(1 <= month <= 12, 1 <= day <= 31, year = all digits!)
+2,9,1986
+
+universal time of perihelion passage
+(0 <= hours <= 24, 0 <= minutes <= 60, 0 <= seconds <= 60)
+15,52,14.592
+
+perihelion radius (Astronomical Units)
+(perihelion radius > 0)
+0.587478
+
+orbital eccentricity (non-dimensional)
+(0 <= eccentricity < 1)
+0.967329
+
+orbital inclination (degrees)
+(0 <= inclination <= 180)
+162.2486
+
+argument of perigee (degrees)
+(0 <= argument of perigee <= 360)
+111.8114
+
+right ascension of the ascending node (degrees)
+(0 <= raan <= 360)
+58.1291

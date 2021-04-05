@@ -5,7 +5,7 @@
 %Linearly interpolate between days for smaller timesteps
 
 %Plots orbits if plot == 1
-function plotions = planetary_positions(plotme, animateme)
+function positions = planetary_positions(plotme)
 
 %Target Body = Earth [Geocenter]
 r_earth = position_vector(2);
@@ -22,13 +22,9 @@ r_venus = position_vector(1);
 %Target Body = Jupiter
 r_jupiter = position_vector(5);
 
-plotions = vertcat(r_venus,r_earth,r_mars,r_ceres,r_jupiter);
+positions = vertcat(r_venus,r_earth,r_mars,r_ceres,r_jupiter);
 
 % Plot Results
-if animateme == 1
-   animate(r_ceres); 
-end
-
 if plotme == 1
     figure()
     polarplot(r_venus(1,:),r_venus(2,:), r_earth(1,:),r_earth(2,:), r_mars(1,:),r_mars(2,:), r_ceres(1,:),r_ceres(2,:), r_jupiter(1,:),r_jupiter(2,:));
@@ -87,18 +83,6 @@ function [x, y, z] = sphere2cart(r,theta,phi)
     x = r .* cos(phi) .* cos(theta);
     y = r .* cos(phi) .* sin(theta);
     z = r .* sin(phi);
-end
-
-%Function for animating orbits
-%In Progress
-function animate(position_vector)
-    figure()
-    polarplot(position_vector(1,1),position_vector(2,1));
-    hold on
-    for i = 2:1:length(position_vector)
-       polarplot(position_vector(1,i),position_vector(2,i),'o');       
-    end
-    hold off
 end
 
 %Horizons Tool:

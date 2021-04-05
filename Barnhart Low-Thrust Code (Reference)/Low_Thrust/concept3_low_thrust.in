@@ -1,0 +1,12 @@
+    0       = itan (=0 circumferential, =-1 tangential, =>0 vectored, deg)
+    0.0416   = nu (T/m in terms of g at initial orbit)
+    0.0     = x1 (initial time tau(0), usually 0)
+    6.2785   = x2 (final time tau for thrusting) targeting a 1.8 year transfer
+    1.0   = x3 (additional time tau for zero-thrust coasting)
+    0.001    = h (time step for integration, delta_tau)
+   10       = iprt (integer time step count between printouts)
+    4       = n (number of equations to solve)
+    0.0     = y(1) (i.c. rho'(0)=0)
+    1.0     = y(2) (i.c. rho(0)=1)
+    1.0     = y(3) (i.c. theta'(0)=1)
+    0.0     = y(4) (i.c. theta(0)=0)

@@ -4,7 +4,7 @@
 %a Hohmann Transfer departure burn assuming circular coplanar orbits and using patched conics
 
 %a1, a2, are semi major axes of initial and final orbits
-%theta is the plane change desired for the burn
+%delta is the plane change desired for the burn
 %altitude is the altitude of the starting orbit
 %Isp is the specific impulse of the spacecraft
 function [Mratio, deltaV_departure, psi] = hohmann_departure_burn(a1, a2, mu_1, delta, altitude, Isp)
