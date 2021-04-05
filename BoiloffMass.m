@@ -54,7 +54,7 @@ storing_pressure1 = [];
 BOM = [];
 q_dprime_conduction = [];
 q_dprime_convection = [];
-q_dprime_radiation = [];
+q_dprime_radiation = []
 q_tot = [];
 R = [];
 F_g = [];
@@ -110,17 +110,17 @@ for n = 1:length(R_s_p)
         q_dprime_radiation(k) = -emissivity_MLI*S_B_C*((Temp_1)^4 - (Temp_2)^4);
         q_tot(k) = surface_area*(q_dprime_conduction(k)+q_dprime_convection(k)+q_dprime_radiation(k)+solar_flux(k));
     end 
-    Temp_saturation(n) = 1/((1/Temp_1) - ((287*log(storing_pressure/storing_pressure_first))/(latent_heat_evap_hydrogen)));
-    pressure_gas_vap(n) = (287*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first)-storing_pressure_first;
-    pressure_gas(n) = (287*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first);
+    Temp_saturation(n) = 1/((1/Temp_1) - ((4124.2*log(storing_pressure/storing_pressure_first))/(latent_heat_evap_hydrogen)));
+    pressure_gas_vap(n) = (4124.2*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first)-storing_pressure_first;
+    pressure_gas(n) = (4124.2*(Temp_saturation(n))*q_tot(n)*time_vector(n))/(latent_heat_evap_hydrogen*volume_tank_first);
     if storing_pressure>=storing_pressure_first
         storing_pressure = storing_pressure_first;
     else 
         storing_pressure = pressure_gas(n);
     end 
-    volume_gas(n) = ((287*time_vector(n)*(Temp_saturation(n)-Temp_1))/pressure_gas_vap(n))-volume_tank_first;
+    volume_gas(n) = ((4124.2*time_vector(n)*(Temp_saturation(n)-Temp_1))/pressure_gas_vap(n))-volume_tank_first;
     Temp_boiloff(n) = ((volume_gas(n)*pressure_gas(n))/C_p)-Temp_saturation(n);
-    BOM(n) = (pressure_gas_vap(n)*volume_gas(n))/(287*Temp_boiloff(n));
+    BOM(n) = (pressure_gas_vap(n)*volume_gas(n))/(4124.2*Temp_boiloff(n));
 end 
 BOM_important = BOM(30:length(R_s_p));
 time_start = time_vector(1);
@@ -134,12 +134,12 @@ BOM_rate = mean(BOM_Rate);
 Distance = distance_from_sun((30:length(R_s_p)));
 R_S_P = (a_u*1000)*(R_s_p((30:length(R_s_p))));
 limit = ((R_s_p(30))/(a_u*1000));
-figure(2)
+figure(1)
 plot(R_S_P,BOM_Rate)
 xlabel('R_{sp}')
 ylabel('BOM rate')
 xlim([limit t_T])
-figure(3)
+figure(2)
 yyaxis left
 plot(time_important/3.154E7,BOM_important)
 ylabel('BOM')

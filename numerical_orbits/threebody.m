@@ -29,7 +29,7 @@ User M-functions required: none
 User subfunctions required: rates, plotit
 %}
 % --------------------------------------------------------------------
-clear all
+clear
 close all
 clc
 G = 6.67259e-20;
