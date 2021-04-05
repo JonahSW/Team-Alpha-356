@@ -1,5 +1,6 @@
 %--------------------------------------------------------------------------
 % low_thrust - low/continuous thrust orbit solution (using rk4)
+% edited by sdf33, jjs280
 %--------------------------------------------------------------------------
 clear all; close all; clc;
 disp('low_thrust');
@@ -19,6 +20,24 @@ for i=1:n
     yv=fscanf(fin,'%g',[1,1]); s=fgetl(fin); 
     fprintf(1,'%g %s\n',yv,s); y(i)=yv;
 end
+
+%% begin edits....
+r0 = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',r0,s);
+m = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',m,s);
+mu = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',mu,s);
+r_target = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',r_target,s);
+rho_target = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',rho_target,s);
+V0 = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',V0,s);
+V_kick = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',V_kick,s);
+disp(' ')
+g = (mu/r0^2)*1000;
+T = nu*m*g;
+fprintf('Thrust: %.5f N\n',T)
+t = (x3+x2)*sqrt(r0^3/mu);
+fprintf('Time of Transfer: %.3f days\n',t/3600/24)
+fprintf('DeltaV due to kick stage: %.3f km/s\n',V_kick)
+%% end edits......more edits below
+
 x=x1; 
 yrow=y(1:end); fprintf(fout,'%12.4e',x); fprintf(fout,'%12.4e',yrow); 
 fprintf(fout,'\r\n');
@@ -73,3 +92,16 @@ polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro');
 %...if version of MATLAB does not support polarplot, use polar below
 %polar(theta,rho);
 status=fclose('all');
+
+
+%% begin edits......
+r_final = r0*rho_end;
+fprintf('Final Orbit Radius:     %.3f km\n',r_final)
+fprintf('Desired Orbit Radius:   %.3f km\n',r_target)
+disp(' ')
+
+%...plot the sprial orbit in polar coordinates
+r1=linspace(1,1); th=linspace(0,2*pi); 
+desired_r=linspace(r_target,r_target); desired_th=linspace(0,2*pi);
+polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro',desired_th,desired_r/r0,'-g')
+% end edits........
