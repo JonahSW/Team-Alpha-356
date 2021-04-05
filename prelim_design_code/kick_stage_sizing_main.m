@@ -18,18 +18,18 @@ g0 = 9.807; %[m/s]
 deltaV_1 = sqrt(mu_earth/a1)*(sqrt((2*a2)/(a1+a2))-1);
 deltaV_2 = sqrt(mu_earth/a2)*(1-sqrt((2*a1)/(a1+a2)));
 
-%Kick Stage Sizing (Biprop, full hohman))
+%Kick Stage Sizing (Biprop, Full Hohmann to SOI)
 Isp = 400; %[s]
 spacecraft_dry_mass = 300e3; %[kg]
 
 Mratio = exp((deltaV_1+deltaV_2)/(Isp*g0));
 propellant_mass = spacecraft_dry_mass*(Mratio - 1);
-%disp(['Propellant mass for a Hohmann Transfer from LEO to Earth SOI is: ',num2str(propellant_mass),' kg']);
+disp(['Propellant mass for a Hohmann Transfer from LEO to Earth SOI is: ',num2str(propellant_mass),' kg']);
 
 %Kick Stage Sizing (Partial kick)
-%2x 12000kg SRs, 10000 kg propellant each, Isp = 300s;
-Isp = 400;% [s]
+%2x 6000kg SRs, 5000 kg propellant each, Isp = 300s;
+Isp = 300;% [s]
 spacecraft_dry_mass = 300e3; %[kg]
-solid_propellant_mass = 20e3;% [kg]
+solid_propellant_mass = 2*5e3;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for a the kick stage is: ',num2str(deltaV_kick),' m/s']);
