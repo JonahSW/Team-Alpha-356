@@ -2,8 +2,8 @@
 % low_thrust - low/continuous thrust orbit solution (using rk4)
 % edited by sdf33, jjs280
 %--------------------------------------------------------------------------
-clear all; close all; clc;
-disp('low_thrust');
+clear; close all; clc;
+disp('low_thrust_modified');
 fnmin=input('enter input file -> ','s'); fin=fopen(fnmin);
 fnmout=strcat(fnmin(1:end-3),'.out');%input('enter output file -> ','s');
 fout=fopen(fnmout,'w');
@@ -42,6 +42,7 @@ nu = (thrust/m)*(r0^2/mu)*1e-3;% (Converting from km to m)
 
 %Display some initial parameters
 disp(' ')
+fprintf('Outputs:\n')
 rho_target = r_target/r0;
 fprintf('Target rho: %.5f \n',rho_target)
 fprintf('Thrust (nu): %.5f \n',nu)
@@ -50,8 +51,8 @@ fprintf('DeltaV due to kick stage (theta_prime): %.3f \n',(y(3)-1))
 %% end edits......more edits below
 
 x=x1; 
-yrow=y(1:end); fprintf(fout,'%12.4e',x); fprintf(fout,'%12.4e',yrow); 
-fprintf(fout,'\r\n');
+yrow=y(1:end); %fprintf(fout,'%12.4e',x); fprintf(fout,'%12.4e',yrow); 
+%fprintf(fout,'\r\n');
 ii=0;
 nn=0;
 rho(1)=y(2); theta(1)=y(4);
@@ -60,8 +61,8 @@ while x <= x2-h
     dydx=derivs(x,y,nu,itan);
     yout=rk4(y,dydx,n,x,h,nu,itan);
     if (ii==iprt)
-        yrow=yout(1:end); xp=x+h; fprintf(fout,'%12.4e',xp); 
-        fprintf(fout,'%12.4e',yrow); fprintf(fout,'\r\n');
+        yrow=yout(1:end); xp=x+h; %fprintf(fout,'%12.4e',xp); 
+        %fprintf(fout,'%12.4e',yrow); fprintf(fout,'\r\n');
         ii=0;
     end
 %...march the solution forward by interval h
@@ -74,9 +75,9 @@ while x <= x2-h
 end
 %...write to display C3 and state variables at the end of thrusting
 c3=y(1)*y(1)+y(2)*y(2)*y(3)*y(3)-2.0/y(2); yrow=y(1:end);
-fprintf(1,'\n');
-fprintf(1,'%12.4e',c3); fprintf(1,'%12.4e',xp); fprintf(1,'%12.4e',yrow);
-fprintf(1,'\r\n');
+%fprintf(1,'\n');
+%fprintf(1,'%12.4e',c3); fprintf(1,'%12.4e',xp); fprintf(1,'%12.4e',yrow);
+%fprintf(1,'\r\n');
 rho_end_thrust=y(2); theta_end_thrust=y(4);
 %...zero-thrust coasting portion of the trajectory
 nu=0.0;
@@ -85,8 +86,8 @@ while x < x2+x3
     dydx=derivs(x,y,nu,itan);
     yout=rk4(y,dydx,n,x,h,nu,itan);
     if (ii==iprt)
-        yrow=y(1:end); xp=x+h; fprintf(fout,'%12.4e',xp); 
-        fprintf(fout,'%12.4e',yrow); fprintf(fout,'\r\n');
+        yrow=y(1:end); xp=x+h; %fprintf(fout,'%12.4e',xp); 
+        %fprintf(fout,'%12.4e',yrow); fprintf(fout,'\r\n');
         ii=0;
     end
 %...march the solution forward by interval h
