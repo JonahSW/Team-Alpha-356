@@ -77,7 +77,7 @@ c3=y(1)*y(1)+y(2)*y(2)*y(3)*y(3)-2.0/y(2); yrow=y(1:end);
 fprintf(1,'\n');
 fprintf(1,'%12.4e',c3); fprintf(1,'%12.4e',xp); fprintf(1,'%12.4e',yrow);
 fprintf(1,'\r\n');
-rho_end=y(2); theta_end=y(4);
+rho_end_thrust=y(2); theta_end_thrust=y(4);
 %...zero-thrust coasting portion of the trajectory
 nu=0.0;
 while x < x2+x3
@@ -97,9 +97,10 @@ while x < x2+x3
     end
     rho(nn+1)=y(2); theta(nn+1)=y(4);
 end
+rho_end=y(2); theta_end=y(4);
 %...plot the spiral orbit in polar coordinates
-r1=linspace(1,1); th=linspace(0,2*pi);
-polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro');
+%r1=linspace(1,1); th=linspace(0,2*pi);
+%polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro');
 %...if version of MATLAB does not support polarplot, use polar below
 %polar(theta,rho);
 status=fclose('all');
@@ -110,12 +111,17 @@ status=fclose('all');
 r_final = r0*rho_end;
 fprintf('Final Orbit Radius:     %.3f km\n',r_final)
 fprintf('Desired Orbit Radius:   %.3f km\n',r_target)
-%fprintf('Final r_prime:   %.3f km\n',0)
-%fprintf('Final theta_prime:   %.3f km\n',0)
+r_end = rho_end*r0;
+r_end_prime = y(1)*r0*sqrt(mu/r0^3);
+theta_end_prime = y(3)*sqrt(mu/r0^3);
+fprintf('Final rho:   %.3f km\n',r_end)
+fprintf('Final theta:   %.3f rad\n',theta_end)
+fprintf('Final r_prime:   %.3f km/s\n',r_end_prime)
+fprintf('Final theta_prime:   %.3f rad/s\n',theta_end_prime)
 disp(' ')
 
 %...plot the sprial orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi); 
 desired_r=linspace(r_target,r_target); desired_th=linspace(0,2*pi);
-polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro',desired_th,desired_r/r0,'-g')
+polarplot(th,r1,'-r',theta,rho,'-b',theta_end_thrust,rho_end_thrust,'ro',desired_th,desired_r/r0,'-g')
 % end edits........
