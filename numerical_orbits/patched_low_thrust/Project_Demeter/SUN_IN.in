@@ -12,7 +12,7 @@
     0.0     = y(4) (i.c. theta(0)=0)
 
     8155.438    = r0 (initial orbit radius, km) (from CERES_OUT.in results)
-    1.5e5  = m (initial spacecraft mass, kg)
+    2e5  = m (initial spacecraft mass, kg)
     1.3271e11  = mu (solar gravitational parameter, km3/s2)
     4.1439e8  = r_target (target orbit radius, earth's SOI, km)
     0.0 = V_kick (final rdot from LEO_OUT_CREW.in) (V0 = sqrt(mu/r0))
