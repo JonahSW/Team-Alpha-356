@@ -34,23 +34,27 @@ t_thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_thrust,s)
 t_coast = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_coast,s);
 thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',thrust,s);
 
+%calclate V0 based on mu and r0
+V0 = sqrt(mu/r0);
 %Replace x2 and x3 with values calculated based on time for thrusting and coasting (Converting from days to seconds)
 x2 = t_thrust*24*3600*sqrt(mu/r0^3);
 x3 = t_coast*24*3600*sqrt(mu/r0^3);
 %Replace nu with value calculated based maximum thrust
 nu = (thrust/m)*(r0^2/mu)*1e-3;% (Converting from km to m)
+%replace y(3) to include kick delta V
+y(3) = ((V0+V_kick)/r0)/sqrt(mu/r0^3);
 
 %Display some initial parameters
 disp(' ')
 disp(' ')
 fprintf('Outputs:\n')
 rho_target = r_target/r0;
-fprintf('Target rho: %.5f \n',rho_target)
-fprintf('Non-Dimen. Thrust (nu): %.5f \n',nu)
-fprintf('Thrust: %.5f N\n',thrust)
+fprintf('Target rho: %.3f \n',rho_target)
+fprintf('Non-Dimen. Thrust (nu): %.6f \n',nu)
+fprintf('Thrust: %.3f N\n',thrust)
 fprintf('Non-Dimen. Total Time (x2+x3): %.3f \n',(x2+x3))
-fprintf('Total Time: %.3f sec\n',t_thrust+t_coast)
-fprintf('Non-Dimen. DeltaV Kick Stage (theta_prime): %.3f \n',(y(3)-1))
+fprintf('Total Time: %.3f days\n',t_thrust+t_coast)
+%fprintf('Non-Dimen. DeltaV Kick Stage (theta_prime): %.5f \n',(y(3)-1))
 %% end edits......more edits below
 
 x=x1; 
@@ -112,13 +116,6 @@ status=fclose('all');
 
 %% begin edits......
 %Display some final results
-r_end = rho_end*r0;
-r_end_prime = y(1)*r0*sqrt(mu/r0^3);
-theta_end_prime = y(3)*sqrt(mu/r0^3);
-fprintf('Non-Dimen. Final rho:   %.3f\n',r_end)
-fprintf('Non-Dimen. Final theta:   %.3f rad\n',theta_end)
-fprintf('Non-Dimen. Final r_prime:   %.3f\n',r_end_prime)
-fprintf('Non-Dimen. Final theta_prime:   %.3f\n',theta_end_prime)
 r_final = r0*rho_end;
 fprintf('Final Orbit Radius:     %.3f km\n',r_final)
 fprintf('Desired Orbit Radius:   %.3f km\n',r_target)
