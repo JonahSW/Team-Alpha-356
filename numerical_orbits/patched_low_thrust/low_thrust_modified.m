@@ -20,7 +20,7 @@ iprt=fscanf(fin,'%hd',[1,1]); s=fgetl(fin); fprintf(1,'%hd %s\n',iprt,s);
 n=fscanf(fin,'%hd',[1,1]); s=fgetl(fin); fprintf(1,'%hd %s\n',n,s);
 
 for i=1:n
-    yv=fscanf(fin,'%g',[1,1]); s=fgetl(fin); 
+    yv=fscanf(fin,'%g',[1,1]); s=fgetl(fin);
     fprintf(1,'%g %s\n',yv,s);
     y(i)=yv;
 end
@@ -131,6 +131,7 @@ V = norm(r_dot,r_final*theta_dot); %...final velocity
 rho_prime_end = y(1); %...final non-dimen rho deriv
 theta_end = y(4); %...final non-dimen theta
 theta_prime_end = y(3); %...final non-dimen theta deriv
+
 disp(' ')
 fprintf('Final non-dimen derivatives:\n')
 fprintf('rho_end:         %.3f\n',rho_end)
@@ -150,7 +151,13 @@ end
 
 fprintf('Final Velocity:    %.3f km/s\n',V)
 
-%...plot the sprial orbit in polar coordinates
+%Calculate propellant mass consumed for burn:
+Isp = 4000;% [s]
+g0 = 9.807;%[m/s^2]
+propellant_mass = (thrust/(Isp*g0))*t_thrust*24*3600;
+fprintf('Propellant mass consumed:   %.3f kg\n',abs(propellant_mass))
+
+%...plot the spiral orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi); 
 desired_r=linspace(r_target,r_target); desired_th=linspace(0,2*pi);
 polarplot(th,r1,'-r',theta,rho,'-b',theta_end_thrust,rho_end_thrust,'ro',desired_th,desired_r/r0,'-g')

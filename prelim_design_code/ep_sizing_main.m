@@ -19,7 +19,7 @@ eta_m = 0.9; %Mass utilization factor
 propellant = 'xenon';
 
 %Define current and voltage inputs
-Vb = 1e1:1e1:3e3; %[V]
+Vb = 1.3e3:1e1:3e3; %[V]
 Ib = 1:1:2e1; %[A]
 
 %Generate throttle curves at various current across a voltage range
@@ -31,11 +31,14 @@ for i = 1:1:length(Ib)
 end
 
 %Optimization
+FoM = T./P;
+max = max(FoM,[],'all')
+plot(P,FoM);
 
 
 %% Plots
-plot_results = 1;
-plot_throttle_curves = 1;
+plot_results = 0;
+plot_throttle_curves = 0;
 
 %Plot results vs. Voltage and Current
 if plot_results == 1
