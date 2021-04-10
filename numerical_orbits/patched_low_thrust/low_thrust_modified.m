@@ -35,15 +35,14 @@ t_thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_thrust,s)
 t_coast = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_coast,s);
 thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',thrust,s);
 
-%calclate V0 based on mu and r0
-V0 = sqrt(mu/r0);
 %Replace x2 and x3 with values calculated based on time for thrusting and coasting (Converting from days to seconds)
 x2 = t_thrust*24*3600*sqrt(mu/r0^3);
 x3 = t_coast*24*3600*sqrt(mu/r0^3);
 %Replace nu with value calculated based maximum thrust
 nu = (thrust/m)*(r0^2/mu)*1e-3;% (Converting from km to m)
-%replace y(3) to include kick delta V
-y(3) = ((V0+V_kick)/r0)/sqrt(mu/r0^3);
+%Add kick delta V to y(3)
+V0 = sqrt(mu/r0);
+y(3) = y(3) + ((V_kick)/r0)/sqrt(mu/r0^3);
 
 %Display some initial parameters
 disp(' ')

@@ -30,15 +30,24 @@ for i = 1:1:length(Ib)
     Isp(:,i) = 123.6.*gamma.*eta_m.*sqrt(Vb); %[s]
 end
 
-%Optimization
-FoM = T./P;
-max = max(FoM,[],'all')
-plot(P,FoM);
+%Selected Operating Point
+%Operating Point: 1400 V, 18.3 A -> 25.2kW, 1.0646N
+V_op = 1400;
+I_op = 18.3;
+T_op = 1.65*gamma*I_op*sqrt(V_op); %[mN]
+P_op = V_op*I_op; %[W]
+Isp_op = 123.6*gamma*eta_m*sqrt(V_op); %[s]
 
+disp(' ')
+fprintf('Target Operating Point:\n')
+fprintf('Required Power (W): %.3f\n',P_op)
+fprintf('Produced Thrust (mN): %.3f\n',T_op)
+fprintf('Operating Isp (s): %.3f\n',Isp_op)
+
+plot_throttle_curves = 0;
 
 %% Plots
 plot_results = 0;
-plot_throttle_curves = 0;
 
 %Plot results vs. Voltage and Current
 if plot_results == 1
@@ -68,7 +77,7 @@ if plot_results == 1
     %legend('');
 end
 
-if plot_throttle_curves == 1
+if plot_results == 1
     %Plot Throttle Curves
     figure()
     plot(P,T);

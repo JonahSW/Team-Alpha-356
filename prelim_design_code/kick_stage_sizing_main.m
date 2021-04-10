@@ -33,15 +33,15 @@ title('Mass Ratio vs. Final Orbit Altitude');
 %Boost Stage Sizing (Full Hohmann)
 %120000kg Biprop, 110000 kg propellant, Isp = 400s;
 Isp = 400;% [s]
-spacecraft_dry_mass = 300e3+1e4; %[kg]
+spacecraft_dry_mass = 3.5e5+1e4; %[kg]
 solid_propellant_mass = 1e5;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for the boost stage is: ',num2str(deltaV_kick),' m/s']);
 
 %Kick Stage Sizing (Partial kick)
-%2x 6000kg SRs, 5000 kg propellant each, Isp = 300s;
+%4x 6000kg SRs, 5000 kg propellant each, Isp = 300s, burn 2 at once;
 Isp = 300;% [s]
-spacecraft_dry_mass = 300e3; %[kg]
+spacecraft_dry_mass = 3.5e5; %[kg]
 solid_propellant_mass = 2*5e3;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for the kick stage is: ',num2str(deltaV_kick),' m/s']);
