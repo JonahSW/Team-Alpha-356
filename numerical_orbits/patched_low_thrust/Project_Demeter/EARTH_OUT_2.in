@@ -1,23 +1,25 @@
     0       = itan (=0 circumferential, =-1 tangential, =>0 vectored, deg)
-    a   = nu (T/m in terms of g at initial orbit) (nu = (T/m)*(r0^2/mu))
+    a       = nu (T/m in terms of g at initial orbit) (nu = (T/m)*(r0^2/mu))
     0.0     = x1 (initial time tau(0), usually 0)
-    b      = x2 (final time tau for thrusting) (tau = t*sqrt(mu/r0^3))
-    c     = x3 (additional time tau for zero-thrust coasting)
+    b       = x2 (final time tau for thrusting) (tau = t*sqrt(mu/r0^3))
+    c       = x3 (additional time tau for zero-thrust coasting)
     0.01    = h (time step for integration, delta_tau)
-    10       = iprt (integer time step count between printouts)
+    10      = iprt (integer time step count between printouts)
     4       = n (number of equations to solve)
     0.0     = y(1) (i.c. rho'(0)=0)
     1.0     = y(2) (i.c. rho(0)=1)
-    1.0     = y(3) (i.c. theta'(0)=1) (theta' = (V0/r0)*sqrt(mu/r0^3)) [((7.4519+1.1932)/7178)/sqrt(398600/(7178)^3) = 1.1601]
+    0.0     = y(3) (i.c. theta'(0)=1) (theta' = (V0/r0)*sqrt(mu/r0^3)) [((7.4519+1.1932)/7178)/sqrt(398600/(7178)^3) = 1.1601]
     0.0     = y(4) (i.c. theta(0)=0)
 
-    301063.035    = r0 (initial orbit radius, km)
-    2.44231e5  = m (initial spacecraft mass, kg)
-    398600  = mu (earth gravitational parameter, km3/s2)
-    9.29e5  = r_target (target orbit radius, earth's SOI, km)
-    0.1032422 = V_kick (velocity imparted by kick stage, km/s) (V0 = sqrt(mu/r0) = 7.4519) (0.0964709+1.0967555)
-    19 = t_thrust (time for low thrusting, days)
-    0 = t_coast (time for coasting, days)
-    80 = thrust (maximum NEP thrust, N)
-    4500 = Isp
-    5 = plane_change
+    181037    = r0 (initial orbit radius, km)  ---->  !! edit based on EARTH_OUT_1.in !!
+    310844    = m (initial spacecraft mass, kg)  ---->  !! edit based on EARTH_OUT_1.in !!
+    398600    = mu (earth gravitational parameter, km3/s2)
+    9.29e5    = r_target (target orbit radius, earth's SOI, km)
+    0.10324   = V_kick (velocity imparted by kick stage, km/s)
+    0.02833   = r_dot_initial (initial radial velocity, km/s)  ---->  !! edit based on EARTH_OUT_1.in !!
+    0.00001   = theta_dot_initial (initial circumferential velocity, rad/s)  ---->  !! edit based on EARTH_OUT_1.in !!
+    20        = t_thrust (time for low thrusting, days)
+    0         = t_coast (time for coasting, days)
+    100       = thrust (maximum NEP thrust, N)
+    4500      = Isp (operating Isp, s)
+    5         = plane_change deltaV (change between assembly inclination and outbound inclination, degrees)

@@ -8,7 +8,7 @@ fnmin=input('enter input file -> ','s'); fin=fopen(fnmin);
 fnmout=strcat(fnmin(1:end-3),'.out'); %...input('enter output file -> ','s');
 fout=fopen(fnmout,'w');
 disp(' ');
-fprintf('Inputs:')
+fprintf('Inputs:\n')
 %...read the input file, write to display
 itan=fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',itan,s);
 nu=fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',nu,s);
@@ -42,6 +42,10 @@ plane_change = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',plane_c
 %...Replace x2 and x3 with values calculated based on time for thrusting and coasting (Converting from days to seconds)
 x2 = t_thrust*24*3600*sqrt(mu/r0^3);
 x3 = t_coast*24*3600*sqrt(mu/r0^3);
+
+%...Circular Orbit Velocity
+Vcir = sqrt(mu/r0);
+theta_dot_initial = Vcir/r0;
 
 %...Replace nu with value calculated based maximum thrust
 nu = (thrust/m)*(r0^2/mu)*1e-3;%...converting from km to m
@@ -127,13 +131,19 @@ status=fclose('all');
 %...Display some final results
 r_final = r0*rho_end;
 disp(' ')
+fprintf('Initial Orbit Radius:   %.3f km\n',r0)
 fprintf('Final Orbit Radius:     %.3f km\n',r_final)
 fprintf('Desired Orbit Radius:   %.3f km\n',r_target)
-%...determine final velocity
-r_dot = r0*y(1)*sqrt(mu/r0^3);
+
+%...final dimen derivatives
+r_dot_final = r0*y(1)*sqrt(mu/r0^3); %...final dimensional radial velocity
 r_final = r0*rho_end; %...final dimensional radius
-theta_dot = y(3)*sqrt(mu/r0^3);
-V = norm(r_dot,r_final*theta_dot); %...final velocity
+theta_dot_final = y(3)*sqrt(mu/r0^3); %...final dimensional circumferential velocity
+Vf = norm(r_dot_final,r_final*theta_dot_final); %...final velocity
+
+fprintf('\nFinal Dimensional Derivatives:\n')
+fprintf('r dot final:   %.5f km/s\n',r_dot_final)
+fprintf('theta dot final:   %.5f rad/s\n',theta_dot_final)
 
 %...final non-dimen derivatives
 rho_prime_end = y(1); %...final non-dimen rho deriv
@@ -141,7 +151,7 @@ theta_end = y(4); %...final non-dimen theta
 theta_prime_end = y(3); %...final non-dimen theta deriv
 
 disp(' ')
-fprintf('Final non-dimen derivatives:\n')
+fprintf('Final Non-Dimen Derivatives:\n')
 fprintf('rho_end:         %.3f\n',rho_end)
 fprintf('rho_prime_end:    %.3f\n',rho_prime_end)
 fprintf('theta_end:       %.3f\n',theta_end)
@@ -157,14 +167,15 @@ else
     fprintf('Final Orbit Type:   Hyperbolic\n')
 end
 
-fprintf('Final Velocity:    %.3f km/s\n',V)
+fprintf('Final Velocity Magnitude:    %.3f km/s\n\n',Vf)
 
 
 %...Calculate propellant mass consumed for burn:
 
 g0 = 9.807; %[m/s^2]
 propellant_mass = (thrust/(Isp*g0))*t_thrust*24*3600;
-fprintf('Propellant mass consumed:   %.3f kg\n',abs(propellant_mass))
+fprintf('Propellant Mass Consumed:   %.3f kg\n',abs(propellant_mass))
+fprintf('Final Mass:   %.3f kg\n',m-abs(propellant_mass))
 
 %%...plot the spiral orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi); 
