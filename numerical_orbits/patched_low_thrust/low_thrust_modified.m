@@ -34,6 +34,8 @@ V_kick = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',V_kick,s);
 t_thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_thrust,s);
 t_coast = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_coast,s);
 thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',thrust,s);
+Isp = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',Isp,s);
+plane_change = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',plane_change,s);
 
 %Replace x2 and x3 with values calculated based on time for thrusting and coasting (Converting from days to seconds)
 x2 = t_thrust*24*3600*sqrt(mu/r0^3);
@@ -151,7 +153,7 @@ end
 fprintf('Final Velocity:    %.3f km/s\n',V)
 
 %Calculate propellant mass consumed for burn:
-Isp = 4000;% [s]
+
 g0 = 9.807;%[m/s^2]
 propellant_mass = (thrust/(Isp*g0))*t_thrust*24*3600;
 fprintf('Propellant mass consumed:   %.3f kg\n',abs(propellant_mass))

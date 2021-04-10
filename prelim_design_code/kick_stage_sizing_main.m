@@ -30,7 +30,7 @@ figure()
 plot(a2*1e-3,Mratio);
 title('Mass Ratio vs. Final Orbit Altitude');
 
-%Boost Stage Sizing (Full Hohmann)
+%Boost Stage Sizing (Big Boost)
 %120000kg Biprop, 110000 kg propellant, Isp = 400s;
 Isp = 400;% [s]
 spacecraft_dry_mass = 3.5e5+1e4; %[kg]

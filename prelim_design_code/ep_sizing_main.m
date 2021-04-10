@@ -32,8 +32,8 @@ end
 
 %Selected Operating Point
 %Operating Point: 1400 V, 18.3 A -> 25.2kW, 1.0646N
-V_op = 1400;
-I_op = 18.3;
+V_op = 2000;
+I_op = 20;
 T_op = 1.65*gamma*I_op*sqrt(V_op); %[mN]
 P_op = V_op*I_op; %[W]
 Isp_op = 123.6*gamma*eta_m*sqrt(V_op); %[s]
