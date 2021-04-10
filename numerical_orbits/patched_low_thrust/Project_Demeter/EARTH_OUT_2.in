@@ -19,3 +19,5 @@
     19 = t_thrust (time for low thrusting, days)
     0 = t_coast (time for coasting, days)
     80 = thrust (maximum NEP thrust, N)
+    4500 = Isp
+    5 = plane_change

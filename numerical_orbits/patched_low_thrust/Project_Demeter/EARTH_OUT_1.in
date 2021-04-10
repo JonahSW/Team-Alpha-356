@@ -20,5 +20,5 @@
     200       = t_thrust (time for low thrusting, days)
     0         = t_coast (time for coasting, days)
     120        = thrust (maximum NEP thrust, N)
-    Isp     = 4500 (operating Isp, s)
+    4500     = Isp (operating Isp, s)
     5        = plane change deltaV (change between assembly inclination and outbound inclination, degrees)
