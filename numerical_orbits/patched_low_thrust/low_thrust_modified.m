@@ -51,8 +51,8 @@ theta_dot_initial = Vcir/r0;
 nu = (thrust/m)*(r0^2/mu)*1e-3;%...converting from km to m
 rho_prime_initial = (r_dot_initial/r0)*sqrt(r0^3/mu); %...rho prime initial
 theta_prime_initial = theta_dot_initial*sqrt(r0^3/mu); %...theta prime initial
-y(1) = y(1) + rho_prime_initial; %...corrected rho prime
-y(3) = y(3) + theta_prime_initial + ((V_kick)/r0)/sqrt(mu/r0^3); %...corrected theta prime
+y(1) = rho_prime_initial; %...corrected rho prime
+y(3) = theta_prime_initial + ((V_kick)/r0)/sqrt(mu/r0^3); %...corrected theta prime
 V0 = norm(r_dot_initial,r0*theta_dot_initial); %...initial velocity magnitude
 
 %...Display some initial parameters
@@ -125,8 +125,7 @@ rho_end=y(2); theta_end=y(4);
 %polar(theta,rho);
 status=fclose('all');
 
-
-%%...begin edits......
+%%...continue edits......
 
 %...Display some final results
 r_final = r0*rho_end;
@@ -135,7 +134,7 @@ fprintf('Initial Orbit Radius:   %.3f km\n',r0)
 fprintf('Final Orbit Radius:     %.3f km\n',r_final)
 fprintf('Desired Orbit Radius:   %.3f km\n',r_target)
 
-%...final dimen derivatives
+%...final dimensional derivatives
 r_dot_final = r0*y(1)*sqrt(mu/r0^3); %...final dimensional radial velocity
 r_final = r0*rho_end; %...final dimensional radius
 theta_dot_final = y(3)*sqrt(mu/r0^3); %...final dimensional circumferential velocity
@@ -151,7 +150,7 @@ theta_end = y(4); %...final non-dimen theta
 theta_prime_end = y(3); %...final non-dimen theta deriv
 
 disp(' ')
-fprintf('Final Non-Dimen Derivatives:\n')
+fprintf('Final Non-Dimensional Derivatives:\n')
 fprintf('rho_end:         %.3f\n',rho_end)
 fprintf('rho_prime_end:    %.3f\n',rho_prime_end)
 fprintf('theta_end:       %.3f\n',theta_end)
@@ -173,18 +172,21 @@ fprintf('Final Velocity Magnitude:    %.3f km/s\n\n',Vf)
 %...Calculate propellant mass consumed for burn:
 g0 = 9.807; %[m/s^2]
 propellant_mass_spiral = (thrust/(Isp*g0))*t_thrust*24*3600;%Propellant used in the outward spiral
-%...Calculate thrust required for plane change
+%...Calculate deltaV required for plane change
 v1 = sqrt(mu/r0);
 v2 = sqrt(mu/r_final);
-deltaV_deltai = sqrt(v1^2 + v2^2 - 2*v1*v2*cos(delta_i*pi/2));
-%..Calculate total propellant mass
+deltaV_deltai = sqrt(v1^2 + v2^2 - 2*v1*v2*cos((delta_i*pi/180)*pi/2));
+%...Calculate total propellant mass
 mratio_deltai = exp(deltaV_deltai/(Isp*g0));
 m_final = (m/mratio_deltai) - propellant_mass_spiral;
 propellant_mass = m - m_final;
+%...Calculate thrust required for plane change
+thrust_deltai = (deltaV_deltai*(m+m_final)/2)/(t_thrust*24*3600);
 
 fprintf('Propellant Mass Consumed:   %.3f kg\n',abs(propellant_mass))
 fprintf('Final Mass:   %.3f kg\n',m_final)
 fprintf('DeltaV Required for Orbital plane Change:   %.3f km/s\n',deltaV_deltai)
+fprintf('Thrust Required for Orbital plane Change:   %.3f N\n',thrust_deltai)
 
 %%...plot the spiral orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi); 

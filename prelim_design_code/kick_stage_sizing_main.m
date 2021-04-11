@@ -2,7 +2,9 @@
 %03/31/2021
 %This code is used to calculate the performance of the chemical kick stage
 %Calculate deltaV to get to Earth SOI and required mass ratio with a chemical kick stage
-clc; clear; close all;
+clc;
+%clear;
+close all;
 
 
 %Hohmann Transfer from assembly orbit to intermediate orbit:
@@ -41,7 +43,7 @@ disp(['Delta V for the boost stage is: ',num2str(deltaV_kick),' m/s']);
 %Kick Stage Sizing (Partial kick)
 %4x 6000kg SRs, 5000 kg propellant each, Isp = 300s, burn 2 at once;
 Isp = 300;% [s]
-spacecraft_dry_mass = 3.5e5; %[kg]
+spacecraft_dry_mass = 300446.335; %[kg]
 solid_propellant_mass = 2*5e3;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for the kick stage is: ',num2str(deltaV_kick),' m/s']);
