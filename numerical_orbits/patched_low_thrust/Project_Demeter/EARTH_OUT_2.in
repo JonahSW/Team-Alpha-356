@@ -15,7 +15,7 @@
     310844    = m (initial spacecraft mass, kg)  ---->  !! edit based on EARTH_OUT_1.in !!
     398600    = mu (earth gravitational parameter, km3/s2)
     9.29e5    = r_target (target orbit radius, earth's SOI, km)
-    0.10324   = V_kick (velocity imparted by kick stage, km/s)
+    0.10324   = V_kick (velocity imparted by kick stage, km/s)  ---->  !! edit based on kick_stage_sizing_main.m !!
     0.02833   = r_dot_initial (initial radial velocity, km/s)  ---->  !! edit based on EARTH_OUT_1.in !!
     0.00001   = theta_dot_initial (initial circumferential velocity, rad/s)  ---->  !! edit based on EARTH_OUT_1.in !!
     20        = t_thrust (time for low thrusting, days)

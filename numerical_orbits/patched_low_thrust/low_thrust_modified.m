@@ -37,7 +37,7 @@ t_thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_thrust,s)
 t_coast = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_coast,s);
 thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',thrust,s);
 Isp = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',Isp,s);
-plane_change = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',plane_change,s);
+delta_i = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',delta_i,s);
 
 %...Replace x2 and x3 with values calculated based on time for thrusting and coasting (Converting from days to seconds)
 x2 = t_thrust*24*3600*sqrt(mu/r0^3);
@@ -145,7 +145,7 @@ fprintf('\nFinal Dimensional Derivatives:\n')
 fprintf('r dot final:   %.5f km/s\n',r_dot_final)
 fprintf('theta dot final:   %.5f rad/s\n',theta_dot_final)
 
-%...final non-dimen derivatives
+%...final non-dimensional derivatives
 rho_prime_end = y(1); %...final non-dimen rho deriv
 theta_end = y(4); %...final non-dimen theta
 theta_prime_end = y(3); %...final non-dimen theta deriv
@@ -157,7 +157,8 @@ fprintf('rho_prime_end:    %.3f\n',rho_prime_end)
 fprintf('theta_end:       %.3f\n',theta_end)
 fprintf('theta_prime_end:    %.3f\n',theta_prime_end)
 
-C = y(1)^2 + (y(2)*y(3))^2 - 2/y(2); %...determine which final orbit type
+%...determine which final orbit type
+C = y(1)^2 + (y(2)*y(3))^2 - 2/y(2);
 disp(' ')
 if C < 0
     fprintf('Final Orbit Type:   Elliptical\n')
@@ -169,13 +170,21 @@ end
 
 fprintf('Final Velocity Magnitude:    %.3f km/s\n\n',Vf)
 
-
 %...Calculate propellant mass consumed for burn:
-
 g0 = 9.807; %[m/s^2]
-propellant_mass = (thrust/(Isp*g0))*t_thrust*24*3600;
+propellant_mass_spiral = (thrust/(Isp*g0))*t_thrust*24*3600;%Propellant used in the outward spiral
+%...Calculate thrust required for plane change
+v1 = sqrt(mu/r0);
+v2 = sqrt(mu/r_final);
+deltaV_deltai = sqrt(v1^2 + v2^2 - 2*v1*v2*cos(delta_i*pi/2));
+%..Calculate total propellant mass
+mratio_deltai = exp(deltaV_deltai/(Isp*g0));
+m_final = (m/mratio_deltai) - propellant_mass_spiral;
+propellant_mass = m - m_final;
+
 fprintf('Propellant Mass Consumed:   %.3f kg\n',abs(propellant_mass))
-fprintf('Final Mass:   %.3f kg\n',m-abs(propellant_mass))
+fprintf('Final Mass:   %.3f kg\n',m_final)
+fprintf('DeltaV Required for Orbital plane Change:   %.3f km/s\n',deltaV_deltai)
 
 %%...plot the spiral orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi); 
