@@ -20,6 +20,6 @@
     0.0        = theta_dot_initial (initial circumferential velocity, rad/s) (cirular orbit at Ceres SOI)
     1.25        = t_thrust (time for low thrusting, days)
     3       = t_coast (time for coasting, days)
-    -100      = thrust (maximum NEP thrust, N)
-    4200        = Isp (operating Isp, s)
+    -120      = thrust (maximum NEP thrust, N) (120 for spiral, 3.2N Unused)
+    4127.358        = Isp (operating Isp, s)
     0           = plane_change deltaV (change between assembly inclination and outbound inclination, degrees)
