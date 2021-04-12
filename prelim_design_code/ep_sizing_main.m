@@ -30,10 +30,10 @@ for i = 1:1:length(Ib)
     Isp(:,i) = 123.6.*gamma.*eta_m.*sqrt(Vb); %[s]
 end
 
-%Selected Operating Point
-%Operating Point: 1400 V, 18.3 A -> 25.2kW, 1.0646N
-V_op = 2000;
-I_op = 20;
+%Selected Operating Point (110 Thrusters)
+%Operating Point: 1500 V, 18.3 A -> 27.45kW, 1.1203N, 4127.36s
+V_op = 1500;
+I_op = 18.3;
 T_op = 1.65*gamma*I_op*sqrt(V_op); %[mN]
 P_op = V_op*I_op; %[W]
 Isp_op = 123.6*gamma*eta_m*sqrt(V_op); %[s]
