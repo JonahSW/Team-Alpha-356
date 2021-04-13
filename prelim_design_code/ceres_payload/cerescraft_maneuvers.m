@@ -10,10 +10,10 @@ clear; clc; close all;
 % finds delta V, mass, mass ratios, duration for each transfer
 
 %% Missions
-% Polar Study Missions: Polar Lander 1 & Polar Lander 2
-% General Surface Study Mission: General Lander 1 & 2, Seismometer Lander 1 & 2
-% Surface Mapping Study: Mapping Orbiter
-% Communications Array Mission: Comms Orbiter 1, 2, 3, & 4
+% Polar Exploration Mission
+% Surface Exploration Mission
+% Surface Mapping Mission
+% Communications Array Mission
 
 %% Initial Parameters
 % parameters
@@ -29,8 +29,8 @@ a2 = radius + alt; % m, radius of LCO
 
 
 
-%% Polar Study Mission
-fprintf('Polar Study Mission: Polar Lander 1 & 2\n\n')
+%% Polar Exploration Mission
+fprintf('Polar Exploration Mission:\n\n')
 
 % landing site = north pole
 angdeg = 90+axial;
@@ -41,20 +41,15 @@ a1 = radius; % m, radius of Ceres
 aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
 h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
 VA = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
-%VB = sqrt(mu/a1); % m/s, velocity of circular orbit at surface of Ceres
-%Vs = 92.61; % m/s, velocity of surface of Ceres at equator
 Vap = h/a2; % m/s, velocity at apoapsis
 Vpe = h/a1; % m/s, velocity at periapsis
-%delVA = VA*(1-sqrt(2*a1/(a1+a2))); % m/s, depart LCO
-%delVB = VB*(sqrt(2*a2/(a1+a2))-1); % m/s, capture at surface orbit
 
 % total delta V's
-%delVpc = 2*VA*sin(axial/2); % m/s, plane change at LCO to equatorial plane
 delVdep = sqrt(Vap^2+VA^2 - 2*Vap*VA*cos(ang)); % m/s, simultaneous plane change and departure burn at LCO
 delVcap = Vpe;%-Vs; % m/s, capture
 delVtot_dec = delVdep + delVcap;
 
-% time of transfer
+% time of orbit change
 T = pi*sqrt(aT^3/mu); % sec, time to transfer
 fprintf(' Descent\n')
 fprintf('   delta V departure: %.2f m/s\n',delVdep)
@@ -62,8 +57,12 @@ fprintf('   delta V capture: %.2f m/s\n',delVcap)
 fprintf('   delta V total: %.2f m/s\n',delVtot_dec)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
+% time of plane change
+
+
 % descent mass ratios
 Isp = 320; % sec, specific impulse
+T = 43600; % N, engine thrust
 M0_12 = 2500; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
@@ -79,16 +78,11 @@ fprintf('   Required Propellant Mass: %.2f kg\n',req_prop)
 % surface to low Ceres orbit (hohmann transfer w/ simultaneous plane change)
 aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
 h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
-%VA = sqrt(mu/a1); % m/s, velocity of circular orbit at surface of Ceres
 VB = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
-%Vs = 92.61; % m/s, velocity of surface of Ceres at equator
 Vap = h/a2; % m/s, velocity at apoapsis
 Vpe = h/a1; % m/s, velocity at periapsis
-%delVB = VB*(1-sqrt(2*a1/(a1+a2))); % m/s, capture at LCO
 
 % total delta V's
-%delVleave = ; % m/s, surface burn to leave surface and enter surface orbit
-%delVpc = 2*VA*sin(axial/2); % m/s, plane change at LCO to elliptical plane
 delVdep = Vpe; %- Vs; % m/s, departure
 delVcap = sqrt(Vap^2+VB^2-2*Vap*VB*cos(ang)); % m/s, simultaneous plane change and capture burn at LCO
 delVtot = delVdep + delVcap;
@@ -139,17 +133,13 @@ a1 = radius; % m, radius of Ceres
 aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
 h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
 VA = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
-%VB = sqrt(mu/a1); % m/s, velocity of circular orbit at surface of Ceres
 Vs = 92.61; % m/s, velocity of surface of Ceres at equator
 wc = Vs/radius; % angular velocity of Ceres rotation
 Vgr = wc*(radius*cos(ang));
 Vap = h/a2; % m/s, velocity at apoapsis
 Vpe = h/a1; % m/s, velocity at periapsis
-%delVA = VA*(1-sqrt(2*a1/(a1+a2))); % m/s, depart LCO
-%delVB = VB*(sqrt(2*a2/(a1+a2))-1); % m/s, capture at surface orbit
 
 % total delta V's
-%delVpc = 2*VA*sin(axial/2); % m/s, plane change at LCO to equatorial plane
 delVdep = sqrt(Vap^2+VA^2 - 2*Vap*VA*cos(ang)); % m/s, simultaneous plane change and departure burn at LCO
 delVcap = Vpe-Vgr; % m/s, capture
 delVtot_desc = delVdep + delVcap;
@@ -179,7 +169,6 @@ fprintf('   Required Propellant Mass: %.2f kg\n',req_prop)
 % surface to low Ceres orbit (hohmann transfer w/ simultaneous plane change)
 aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
 h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
-%VA = sqrt(mu/a1); % m/s, velocity of circular orbit at surface of Ceres
 VB = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
 Vs = 92.61; % m/s, velocity of surface of Ceres at equator
 wc = Vs/radius; % angular velocity of Ceres rotation
@@ -189,8 +178,6 @@ Vpe = h/a1; % m/s, velocity at periapsis
 delVB = VB*(1-sqrt(2*a1/(a1+a2))); % m/s, capture at LCO
 
 % total delta V's
-%delVleave = ; % m/s, surface burn to leave surface and enter surface orbit
-%delVpc = 2*VA*sin(axial/2); % m/s, plane change at LCO to elliptical plane
 delVdep = Vpe-Vgr; % m/s, departure
 delVcap = sqrt(Vap^2+VB^2-2*Vap*VB*cos(ang)); % m/s, simultaneous plane change and capture burn at LCO
 delVtot = delVdep + delVcap;
@@ -221,6 +208,7 @@ fprintf('\n')
 fprintf(' Overall\n')
 fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_desc)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
+
 
 % plot final orbit
 craftmass = M0_12;
@@ -265,6 +253,11 @@ fprintf('   Required Propellant Mass: %.2f kg\n\n',M0_12-M_C)
 craftmass = M0_12;
 vel = VB/1000;
 orbits_ceres(craftmass,angdeg,vel)
+
+
+
+
+
 
 %% Communications Array Mission
 fprintf('\n')
