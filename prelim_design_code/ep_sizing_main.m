@@ -32,8 +32,8 @@ end
 
 %Selected Operating Point (110 Thrusters)
 %Operating Point: 1500 V, 18.3 A -> 27.45kW, 1.1203N, 4127.36s
-V_op = 1500;
-I_op = 18.3;
+V_op = 1850;
+I_op = 15.0;
 T_op = 1.65*gamma*I_op*sqrt(V_op); %[mN]
 P_op = V_op*I_op; %[W]
 Isp_op = 123.6*gamma*eta_m*sqrt(V_op); %[s]
@@ -42,6 +42,8 @@ disp(' ')
 fprintf('Target Operating Point:\n')
 fprintf('Required Power (W): %.3f\n',P_op)
 fprintf('Produced Thrust (mN): %.3f\n',T_op)
+num_thrusters = 110;
+fprintf('Total Thrust (N): %.3f\n',T_op*num_thrusters/1000)
 fprintf('Operating Isp (s): %.3f\n',Isp_op)
 
 plot_throttle_curves = 0;

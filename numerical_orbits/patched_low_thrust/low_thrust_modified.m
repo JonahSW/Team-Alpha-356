@@ -32,7 +32,6 @@ mu = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',mu,s);
 r_target = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',r_target,s);
 V_kick = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',V_kick,s);
 r_dot_initial = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',r_dot_initial,s);
-theta_dot_initial = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',theta_dot_initial,s);
 t_thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_thrust,s);
 t_coast = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',t_coast,s);
 thrust = fscanf(fin,'%g',[1,1]); s=fgetl(fin); fprintf(1,'%g %s\n',thrust,s);
@@ -175,8 +174,8 @@ fprintf('Final circumferential velocity:   %.5f km/s\n',theta_dot_final*1e-6*r_f
 g0 = 9.807; %[m/s^2]
 propellant_mass_spiral = (abs(thrust)/(Isp*g0))*t_thrust*24*3600;%Propellant used in the outward spiral
 %...Calculate deltaV required for plane change
-v1 = sqrt(mu/r0) + V_kick;
-v2 = Vf;
+v1 = sqrt(mu/r0);
+v2 = sqrt(mu/r_final);
 deltaV_deltai = sqrt(v1^2 + v2^2 - 2*v1*v2*cos((delta_i*pi/180)*pi/2));
 %...Calculate total propellant mass
 mratio_deltai = exp(deltaV_deltai/(Isp*g0));
