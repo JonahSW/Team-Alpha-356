@@ -6,20 +6,20 @@
     0.01    = h (time step for integration, delta_tau)
     10      = iprt (integer time step count between printouts)
     4       = n (number of equations to solve)
-    0.0     = y(1) (i.c. rho'(0)=0) ---->  !! edit based on EARTH_OUT_2.in !!
-    1.0     = y(2) (i.c. rho(0)=1)
-    0.0     = y(3) (i.c. theta'(0)=1) ---->  !! edit based on EARTH_OUT_2.in !!
-    0.0     = y(4) (i.c. theta(0)=0)
+    0.0     = y(1) (i.c. rho'(0)=0) ---->  !! edit based on SUN_OUT_1.in !!
+    1.0     = y(2) (i.c. rho(0)=1) ---->  !! edit based on SUN_OUT_1.in !!
+    0.0     = y(3) (i.c. theta'(0)=1) ---->  !! edit based on SUN_OUT_1.in !!
+    0.0     = y(4) (i.c. theta(0)=0) ---->  !! edit based on SUN_OUT_1.in !!
 
-    333924508    = r0 (initial orbit radius, km) (1AU)
-    203227      = m (initial spacecraft mass, kg)  ---->  !! edit based on EARTH_OUT_2.in !!
+    260583565    = r0 (initial orbit radius, km)  ---->  !! edit based on SUN_OUT_1.in !!
+    226286      = m (initial spacecraft mass, kg)  ---->  !! edit based on SUN_OUT_1.in !!
     1.3271e11   = mu (solar gravitational parameter, km3/s2)
     4.1439e8    = r_target (target orbit radius, Ceres orbit, km)
     0.0         = V_kick (velocity imparted by kick stage or hyperbolic excess velocity, km/s)
-    10.05290     = r_dot_initial (initial radial velocity, km/s)   (Replaces y(3))
-    21.23330           = theta_dot_initial (initial circumferential velocity, rad/s) (Earth Orbit Velocity) (Replaces y(3))
+    8.77887     = r_dot_initial (initial radial velocity, km/s)   (Replaces y(3))
+    0.09040*10^-6   = theta_dot_initial (initial circumferential velocity, rad/s) (Earth Orbit Velocity) (Replaces y(3))
     50         = t_thrust (time for low thrusting, days)
-    1000         = t_coast (time for coasting, days)
-    120         = thrust (maximum NEP thrust, N) (120 for spiral, 3.2N Unused)
-    4127.358        = Isp (operating Isp, s)
-    0           = plane_change deltaV (change between assembly inclination and outbound inclination, degrees)
+    50       = t_coast (time for coasting, days)
+    120        = thrust (maximum NEP thrust, N) (120 for spiral, 3.2N Unused)
+    4127.358   = Isp (operating Isp, s)
+    0          = plane_change deltaV (change between assembly inclination and outbound inclination, degrees)
