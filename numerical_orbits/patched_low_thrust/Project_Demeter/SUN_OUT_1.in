@@ -18,7 +18,7 @@
     0           = V_kick (velocity imparted by kick stage or hyperbolic excess velocity, km/s)
     0.990       = r_dot_initial (initial radial velocity, km/s)   (Replaces y(3))
     0           = theta_dot_initial (initial circumferential velocity, rad/s) (Earth Orbit Velocity) (Replaces y(3))
-    250         = t_thrust (time for low thrusting, days)
+    200         = t_thrust (time for low thrusting, days)
     0           = t_coast (time for coasting, days)
     120         = thrust (maximum NEP thrust, N) (120 for spiral, 3.2N Unused)
     4127.358        = Isp (operating Isp, s)
