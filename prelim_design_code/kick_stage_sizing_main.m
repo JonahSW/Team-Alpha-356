@@ -43,11 +43,10 @@ disp(['Delta V for the boost stage is: ',num2str(deltaV_kick),' m/s']);
 %Kick Stage Sizing (Partial kick)
 %4x 6000kg SRs, 5000 kg propellant each, Isp = 300s, burn 4 at once;
 Isp = 300;% [s]
-spacecraft_dry_mass = 3.5528e5+2.4e4; %[kg]
+spacecraft_dry_mass = 386297.357; %[kg]
 solid_propellant_mass = 4*5e3;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for the kick stage is: ',num2str(deltaV_kick),' m/s']);
-
 
 %Hohmann Transfer from assembly orbit to Earth SOI:
 %{

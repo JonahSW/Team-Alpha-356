@@ -31,7 +31,7 @@ for i = 1:1:length(Ib)
 end
 
 %Selected Operating Point (110 Thrusters)
-%Operating Point: 1500 V, 18.3 A -> 27.45kW, 1.1203N, 4127.36s
+%Operating Point: 1850 V, 15 A -> 27.45kW, 1.1203N, 4127.36s
 V_op = 1850;
 I_op = 15.0;
 T_op = 1.65*gamma*I_op*sqrt(V_op); %[mN]
