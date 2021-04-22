@@ -65,8 +65,19 @@ deltaV6 = spiral(mu_earth,r0,r);
 
 
 %% Results
-deltaV_total = (deltaV1+deltaV2+deltaV3+deltaV4+deltaV5+deltaV6)*1e-3;
-disp(['The total mission deltaV is ',num2str(deltaV_total),' km/s.']);
+deltaV_total = (deltaV1+deltaV2+deltaV3+deltaV4+deltaV5+deltaV6);
+disp(['The total mission deltaV is ',num2str(deltaV_total*1e-3),' km/s.']);
+
+%Spacecraft Mass
+Isp = 4500;% [s]
+g0 = 9.807;% [m/s^2]
+mratio = exp(deltaV_total/(Isp*g0));
+m_dry = 220e3;% [kg]
+m_wet = m_dry*mratio;
+m_propellant = m_wet-m_dry;
+disp(['The total mission mass ratio is ',num2str(mratio),'']);
+disp(['The total spacecraft wet mass is ',num2str(m_wet),' kg.']);
+disp(['The total propellant mass is ',num2str(m_propellant),' kg.']);
 
 %%
 function deltaV = spiral(mu,r0,r)

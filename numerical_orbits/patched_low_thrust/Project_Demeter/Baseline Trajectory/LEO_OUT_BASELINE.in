@@ -20,5 +20,5 @@
     301       = t_thrust (time for low thrusting, days)
     0         = t_coast (time for coasting, days)
     110       = thrust (maximum NEP thrust, N) (110 for spiral, 2.2N For delta_i)
-    4583.660      = Isp (operating Isp, s)
+    4825.068      = Isp (operating Isp, s)
     0      = delta_i (plane change deltaV) (change between assembly inclination and ecliptic, degrees)
