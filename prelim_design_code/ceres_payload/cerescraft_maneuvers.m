@@ -63,7 +63,7 @@ fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 % descent mass ratios
 Isp = 320; % sec, specific impulse
 T = 43600; % N, engine thrust
-M0_12 = 2500; % kg, wet mass before descent
+M0_12 = 1870; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -122,7 +122,7 @@ orbits_ceres(craftmass,angdeg,vel)
 
 %% General Surface Study Mission
 fprintf('\n')
-fprintf('General Surface Study Mission: General Lander 1, 2, 3, & 4\n')
+fprintf('General Surface Study Mission: General Lander 1, 2\n')
 fprintf('\n')
 % landing site = 30 degrees from equator (both northern and southern hemisphere)
 angdeg = 30+axial;
@@ -154,7 +154,7 @@ fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
 Isp = 320; % sec, specific impulse
-M0_12 = 2500; % kg, wet mass before descent
+M0_12 = 1560; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -238,7 +238,7 @@ fprintf('   Plane Change Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
 Isp = 3000; % sec, specific impulse
-M0_12 = 1500; % kg, wet mass before descent
+M0_12 = 780; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
