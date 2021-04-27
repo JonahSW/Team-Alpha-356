@@ -32,6 +32,7 @@ g0 = 9.807;% [m/s^2]
 m_dry = 220e3;% [kg]
 m_dot = 1.343e-3;%[kg/s]
 
+%% Delta Vs
 %DeltaV for leaving Earth's SOI (1)
 r0 = LEO_assembly_altitude + r_earth;
 r = r_earth_SOI;

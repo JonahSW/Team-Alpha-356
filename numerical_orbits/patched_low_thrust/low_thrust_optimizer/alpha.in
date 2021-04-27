@@ -2,11 +2,12 @@
     10      = iprt (integer time step count between printouts)
     4       = n (number of equations to solve)
     398600  = mu (st. gravitational parameter, km^3/s^2)
+    1       = final_orbit_type (1 = circular, 2 = elliptical, 3 = parabolic, 4 = hyperbolic)
     
     7178.0    = r0 (initial orbit radius, km) (800km assembly altitude + 6378.0km radius)
     929000    = r_target (Earth SOI)
     5.14	  = delta_i (plane change, deg) (change between assembly inclination and ecliptic, degrees)  
-    0.12      = theta_dot_mod (modification to tangential velocity, +/-km/s) ()
+    0.12      = theta_dot_mod (modification to circular tangential velocity, +/-km/s) ()
     0         = r_dot_initial (initial radial velocity, km/s) ()
     329.5     = t_thrust (time for low thrusting, days) ()
     10        = t_coast (time for coasting, days) ()
