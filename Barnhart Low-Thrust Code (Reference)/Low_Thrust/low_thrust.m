@@ -19,6 +19,7 @@ for i=1:n
     yv=fscanf(fin,'%g',[1,1]); s=fgetl(fin); 
     fprintf(1,'%g %s\n',yv,s); y(i)=yv;
 end
+
 x=x1; 
 yrow=y(1:end); fprintf(fout,'%12.4e',x); fprintf(fout,'%12.4e',yrow); 
 fprintf(fout,'\r\n');
@@ -67,6 +68,7 @@ while x < x2+x3
     end
     rho(nn+1)=y(2); theta(nn+1)=y(4);
 end
+
 %...plot the sprial orbit in polar coordinates
 r1=linspace(1,1); th=linspace(0,2*pi);
 polarplot(th,r1,'-r',theta,rho,'-b',theta_end,rho_end,'ro');

@@ -103,7 +103,7 @@ m_propellant_outbound = m_wet_outbound-m_wet_ceres;% [kg]
 duration_outbound = m_propellant_outbound/m_dot_propellant;% [s]
 
 m_wet_initial = m_wet_outbound + m_wet_kickstage;% [kg]
-
+mratio1 = exp(deltaV1/(Isp*g0))
 %% Results
 deltaV_total = deltaV_inbound+deltaV_outbound;% [m/s]
 disp(['The total mission deltaV is ',num2str(deltaV_total*1e-3),' km/s.']);
