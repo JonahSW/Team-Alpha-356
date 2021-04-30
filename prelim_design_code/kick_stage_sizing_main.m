@@ -42,9 +42,9 @@ disp(['Delta V for the boost stage is: ',num2str(deltaV_kick),' m/s']);
 
 %Kick Stage Sizing (Partial kick)
 %4x 6000kg SRs, 5000 kg propellant each, Isp = 300s, burn 4 at once;
-Isp = 300;% [s]
-spacecraft_dry_mass = 386297.357; %[kg]
-solid_propellant_mass = 4*5e3;% [kg]
+Isp = 302.9;% [s]
+spacecraft_dry_mass = 500000; %[kg]
+solid_propellant_mass = 4*4.5e3;% [kg]
 deltaV_kick = Isp*g0*log((spacecraft_dry_mass+solid_propellant_mass)/spacecraft_dry_mass);
 disp(['Delta V for the kick stage is: ',num2str(deltaV_kick),' m/s']);
 
