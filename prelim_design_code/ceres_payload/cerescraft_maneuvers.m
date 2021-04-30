@@ -61,7 +61,7 @@ fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 
 % descent mass ratios
-Isp = 320; % sec, specific impulse
+Isp = 286; % sec, specific impulse
 T = 43600; % N, engine thrust
 M0_12 = 1870; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
@@ -153,7 +153,7 @@ fprintf('   delta V total: %.2f m/s\n',delVtot_desc)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-Isp = 320; % sec, specific impulse
+Isp = 286; % sec, specific impulse
 M0_12 = 1560; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
