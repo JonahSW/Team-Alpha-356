@@ -46,7 +46,13 @@ V3_hist = -vj.*log(1-ao.*tphase3./vj); % m/s, velocity history as a function of 
 L3 = vj.^2./ao.*((ao.*t1./vj).^2-(1-ao.*t1./vj).*log(1-ao.*t1./vj) - ao.*t1./vj); % m, characteristic length
 
 %%...mission totals
-L = L1+L2+L3;
+L = L1+L2+L3; % m, total distance of trip
+Ttot = T; % sec, total duration of trip
+delVtot = 2*Vmax; % m/s, total delta V
+fprintf('Mission Totals:')
+fprintf('   total distance of trip (m): %.2f',L)
+fprintf('   total duration of trip (sec): %.2f',Ttot)
+fprintf('   total delta V (m/s): %.2f',delVtot)
 
 %%...plotting
 figure
@@ -57,7 +63,11 @@ plot(tphase1,V1_hist)
 plot(tphase2,Vmax)
 plot(tphase3,V3_hist)
 
-
-
-
+figure
+hold on
+xlabel('Time (sec)')
+ylabel('Velocity (m/s)')
+plot(tphase1,a1_hist)
+plot(tphase2,0)
+plot(tphase3,a3_hist)
 
