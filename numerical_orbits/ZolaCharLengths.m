@@ -20,7 +20,7 @@ Isp = 8180; % sec, specific impulse
 vj = Isp*g; % effective velocity
 
 %%...trip parameters
-t1 = 300; % days, phase 1 trip time
+t1 = 430; % days, phase 1 trip time
 t2_add = 10; % days, additional time on phase 2
 t2 = t1 + t2_add; % days, phase 2 time step
 t3_add = 10; % days, additional time on phase 3
@@ -49,7 +49,7 @@ L2 = Vmax.*(t2-t1); % m, characteristic length
 fprintf('Phase 2 Totals:\n')
 fprintf('   total distance of trip (AU): %.5f\n',L2/(1.496e+11))
 fprintf('   total duration of trip (days): %.3f\n',t2_add)
-fprintf('   total delta V (km/s): %.4f\n',Vmax/1000)
+fprintf('   total delta V (km/s): %.4f\n',0)
 
 %%...phase 3...deccelerating, t2 < t < T
 T = t3*24*3600; % secs, time
