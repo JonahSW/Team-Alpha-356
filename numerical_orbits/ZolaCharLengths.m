@@ -1,5 +1,5 @@
 %% Zola Characteristic Lengths
-function [delVtot, L, Ttot] = ZolaCharLengths(t1,t2,t3)
+function [delVtot, L, Ttot] = ZolaCharLengths(md,mp,t1,t2,t3)
 % 5.2.21
 % sdf33
 
@@ -12,8 +12,6 @@ function [delVtot, L, Ttot] = ZolaCharLengths(t1,t2,t3)
 g = 9.807; % m/s2, Earth gravity
 
 %...Alpha parameters
-md = 325000; % kg, initial wet mass
-mp = 150000; % kg, propellant mass
 mo = md + mp; % kg, wet mass
 F = 120.1; % N, thrust
 ao = F/mo; % m/s2, initial acceleration
@@ -22,7 +20,7 @@ vj = Isp*g; % effective velocity
 
 %%...phase 1...accelerating, 0 < t < t1
 t1 = t1*24*3600; % secs, time
-a1 = (ao)./(1 - (ao)*t1/vj); % m/s2, acceleration magnitude
+%a1 = (ao)./(1 - (ao)*t1/vj); % m/s2, acceleration magnitude
 V1 = -vj*log(1-(ao)*t1/vj); % m/s, velocity magnitude
 L1 = (vj^2/(ao))*((1-(ao)*t1/vj)*log(1-(ao)*t1/vj) + (ao)*t1/vj); % m, characteristic length
 
@@ -43,7 +41,8 @@ L2 = Vmax.*(t2-t1); % m, characteristic length
 
 %%...phase 3...deccelerating, t2 < t < T
 T = t3*24*3600; % secs, time
-L3 = vj.^2./ao.*((ao.*t1./vj).^2-(1-ao.*t1./vj).*log(1-ao.*t1./vj) - ao.*t1./vj); % m, characteristic length
+%L3 = vj.^2./ao.*((ao.*t1./vj).^2-(1-ao.*t1./vj).*log(1-ao.*t1./vj) - ao.*t1./vj); % m, characteristic length
+L3 = ao*t1^2 - L1;
 
 % fprintf('Phase 3 Totals:\n')
 % fprintf('   total distance of trip (AU): %.5f\n',L3/(1.496e+11))
