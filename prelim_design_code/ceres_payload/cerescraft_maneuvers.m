@@ -24,14 +24,14 @@ g = 9.807; % m/s2, acceleration of Earth
 soi = 7.7e7; % m
 
 % low Ceres orbit
-alt = 500000; % m, altitude of LCO
+alt = 700000; % m, altitude of LCO
 a2 = radius + alt; % m, radius of LCO
 
 %% Polar Exploration Mission
 fprintf('Polar Exploration Mission:\n\n')
 
 % landing site = north pole
-angdeg = 12+axial;
+angdeg = 20+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> surface (hohnmann transfer w/ simultaneous plane change)
@@ -56,13 +56,8 @@ fprintf('   delta V total: %.2f m/s\n',delVtot_dec)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-<<<<<<< HEAD
 Isp = 321; % sec, specific impulse
-=======
-Isp = 286; % sec, specific impulse
-T = 43600; % N, engine thrust
->>>>>>> 4abbd7289a6a8ade06323536c6c2004510ed9bd0
-M0_12 = 1870; % kg, wet mass before descent
+M0_12 = 1500; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -124,7 +119,7 @@ fprintf('\n')
 fprintf('General Surface Study Mission: General Lander 1, 2\n')
 fprintf('\n')
 % landing site = 30 degrees from equator (both northern and southern hemisphere)
-angdeg = 30+axial;
+angdeg = 80+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> surface (hohnmann transfer w/ simultaneous plane change)
@@ -152,13 +147,8 @@ fprintf('   delta V total: %.2f m/s\n',delVtot_desc)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-<<<<<<< HEAD
 Isp = 320; % sec, specific impulse
-M0_12 = 2410; % kg, wet mass before descent
-=======
-Isp = 286; % sec, specific impulse
-M0_12 = 1560; % kg, wet mass before descent
->>>>>>> 4abbd7289a6a8ade06323536c6c2004510ed9bd0
+M0_12 = 1800; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -197,7 +187,7 @@ fprintf('   delta V total: %.2f m/s\n',delVtot)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % ascent mass ratios
-M_left = 100; % kg, mass left on Ceres
+M_left = 161; % kg, mass left on Ceres
 M0_21 = M_C - M_left; % kg, mass before ascent
 Mratio = exp(delVdep/g/Isp);
 Mra = Mra*Mratio;
@@ -269,13 +259,13 @@ fprintf('Communications Array Mission: Comms Orbiter 1 & Comms Orbiter 2\n')
 fprintf('\n')
 
 % desired orbit: high elliptic orbit (HEO) with 60 deg axial inclination
-angdeg = 0+axial;
+angdeg = 20+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> HEO with 60 deg axial inclination
 a1 = radius; % m, radius of Ceres
-rA = soi*(0.03); % radius of apoapsis
-rP = a2; % radius of periapsis
+rA = 2000000; % m, radius of apoapsis
+rP = a2; % m, radius of periapsis
 aT = (rA+rP)/2; % m, semimajor axis of transfer ellipse
 e = (rA-rP)/(rA+rP); % eccentricity
 h = sqrt(2*mu*rA*rP/(rA+rP)); % kg-m2/s, angular momentum of HEO
@@ -293,7 +283,7 @@ fprintf('   delta V total: %.2f m/s\n',delVdep)
 fprintf('   Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-Isp = 300; % sec, specific impulse
+Isp = 321; % sec, specific impulse
 M0_12 = 30; % kg, wet mass before orbit and place changes
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
@@ -302,7 +292,7 @@ Mratio = exp(delVcap/g/Isp);
 Mra = Mra*Mratio;
 M_C = M_D/Mratio;
 
-fprintf('   Landing Mass: %.2f kg\n',M_C)
+fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n',M0_12-M_C)
 
 % % plot final orbit
