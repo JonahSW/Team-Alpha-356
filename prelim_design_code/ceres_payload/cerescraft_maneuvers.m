@@ -24,16 +24,14 @@ g = 9.807; % m/s2, acceleration of Earth
 soi = 7.7e7; % m
 
 % low Ceres orbit
-alt = 100000; % altitude of LCO
+alt = 500000; % m, altitude of LCO
 a2 = radius + alt; % m, radius of LCO
-
-
 
 %% Polar Exploration Mission
 fprintf('Polar Exploration Mission:\n\n')
 
 % landing site = north pole
-angdeg = 90+axial;
+angdeg = 12+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> surface (hohnmann transfer w/ simultaneous plane change)
@@ -57,12 +55,8 @@ fprintf('   delta V capture: %.2f m/s\n',delVcap)
 fprintf('   delta V total: %.2f m/s\n',delVtot_dec)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
-% time of plane change
-
-
 % descent mass ratios
-Isp = 320; % sec, specific impulse
-T = 43600; % N, engine thrust
+Isp = 321; % sec, specific impulse
 M0_12 = 1870; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
@@ -98,7 +92,7 @@ fprintf('   delta V total: %.2f m/s\n',delVtot)
 fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % ascent mass ratios
-M_left = 100; % kg, mass left on Ceres
+M_left = 161; % kg, mass left on Ceres
 M0_21 = M_C - M_left; % kg, mass before ascent
 Mratio = exp(delVdep/g/Isp);
 Mra = Mra*Mratio;
@@ -114,10 +108,10 @@ fprintf(' Overall\n')
 fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_dec)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
-% plot final orbit
-craftmass = M0_12;
-vel = VB/1000;
-orbits_ceres(craftmass,angdeg,vel)
+% % plot final orbit
+% craftmass = M0_12;
+% vel = VB/1000;
+% orbits_ceres(craftmass,angdeg,vel)
 
 
 %% General Surface Study Mission
@@ -154,7 +148,7 @@ fprintf('   Descent Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
 Isp = 320; % sec, specific impulse
-M0_12 = 1560; % kg, wet mass before descent
+M0_12 = 2410; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -210,18 +204,18 @@ fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_desc)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
 
-% plot final orbit
-craftmass = M0_12;
-vel = VB/1000;
-orbits_ceres(craftmass,angdeg,vel) % lander 1
-orbits_ceres(craftmass,-angdeg,vel) % lander 2
+% % plot final orbit
+% craftmass = M0_12;
+% vel = VB/1000;
+% orbits_ceres(craftmass,angdeg,vel) % lander 1
+% orbits_ceres(craftmass,-angdeg,vel) % lander 2
 
 %% Surface Mapping Study Mission
 fprintf('\n')
 fprintf('Surface Mapping Study Mission: Surface Mapping Orbiter\n')
 fprintf('\n')
 % desired orbit = polar orbit
-angdeg = 90+axial;
+angdeg = 0+axial;
 ang = deg2rad(angdeg);
 
 VA = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
@@ -237,8 +231,8 @@ fprintf('   delta V total: %.2f m/s\n',delVdep)
 fprintf('   Plane Change Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-Isp = 3000; % sec, specific impulse
-M0_12 = 780; % kg, wet mass before descent
+Isp = 321; % sec, specific impulse
+M0_12 = 1400; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -249,10 +243,10 @@ M_C = M_D/Mratio;
 fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n\n',M0_12-M_C)
 
-% plot final orbit
-craftmass = M0_12;
-vel = VB/1000;
-orbits_ceres(craftmass,angdeg,vel)
+% % plot final orbit
+% craftmass = M0_12;
+% vel = VB/1000;
+% orbits_ceres(craftmass,angdeg,vel)
 
 
 
@@ -265,7 +259,7 @@ fprintf('Communications Array Mission: Comms Orbiter 1 & Comms Orbiter 2\n')
 fprintf('\n')
 
 % desired orbit: high elliptic orbit (HEO) with 60 deg axial inclination
-angdeg = 30+axial;
+angdeg = 0+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> HEO with 60 deg axial inclination
@@ -289,8 +283,8 @@ fprintf('   delta V total: %.2f m/s\n',delVdep)
 fprintf('   Transfer Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
-Isp = 3000; % sec, specific impulse
-M0_12 = 1500; % kg, wet mass before orbit and place changes
+Isp = 300; % sec, specific impulse
+M0_12 = 30; % kg, wet mass before orbit and place changes
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -301,10 +295,10 @@ M_C = M_D/Mratio;
 fprintf('   Landing Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n',M0_12-M_C)
 
-% plot final orbit
-craftmass = M0_12;
-vel = Vpe/1000;
-orbits_ceres(craftmass,angdeg,vel) % comms orbiter 1
-orbits_ceres(craftmass,-angdeg,vel) % comms orbiter 2
-orbits_ceres(craftmass,180+angdeg,vel) % comms orbiter 3
-orbits_ceres(craftmass,180-angdeg,vel) % comms orbiter 4
+% % plot final orbit
+% craftmass = M0_12;
+% vel = Vpe/1000;
+% orbits_ceres(craftmass,angdeg,vel) % comms orbiter 1
+% orbits_ceres(craftmass,-angdeg,vel) % comms orbiter 2
+% orbits_ceres(craftmass,180+angdeg,vel) % comms orbiter 3
+% orbits_ceres(craftmass,180-angdeg,vel) % comms orbiter 4
