@@ -183,10 +183,15 @@ m_final = (m/mratio_deltai) - propellant_mass_spiral;
 propellant_mass = m - m_final;
 %...Calculate thrust required for plane change
 thrust_deltai = (deltaV_deltai*(m+m_final)/2)/(t_thrust*24*3600);
+%...Calculate thrust required for plane change
+mass_ratio = m/m_final;
+deltaV_total = Isp*g0*log(mass_ratio);
 
 fprintf('Propellant Mass Consumed:   %.3f kg\n',abs(propellant_mass))
 fprintf('Final Mass:   %.3f kg\n',m_final)
-fprintf('DeltaV Required for Orbital plane Change:   %.3f km/s\n',deltaV_deltai)
+fprintf('Mass Ratio:   %.3f \n',mass_ratio)
+%fprintf('DeltaV Required for Orbital plane Change:   %.3f km/s\n',deltaV_deltai)
+fprintf('Total DeltaV Required:   %.3f m/s\n',deltaV_total)
 fprintf('Thrust Required for Orbital plane Change:   %.3f N\n',thrust_deltai)
 
 %%...plot the spiral orbit in polar coordinates
@@ -194,3 +199,6 @@ r1=linspace(1,1); th=linspace(0,2*pi);
 desired_r=linspace(r_target,r_target); desired_th=linspace(0,2*pi);
 polarplot(th,r1,'-r',theta,rho,'-b',theta_end_thrust,rho_end_thrust,'ro',desired_th,desired_r/r0,'-g',theta_end,rho_end,'co')
 %%...end edits........
+
+
+%%
