@@ -8,7 +8,7 @@ clear
 
 %% Testing orbit calculations
 %Load ephemeris data
-positions = planetary_positions(1,0);
+positions = planetary_positions(1);
 earth_ephemeris = read_ephemeris(2);
 ceres_ephemeris = read_ephemeris(4);
 
