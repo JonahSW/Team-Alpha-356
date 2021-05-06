@@ -1,12 +1,11 @@
-% sdf33
-% updated 4.3.21
-
 %% Ceres Craft Maneuvers
 clear; clc; close all;
 
-% selection initial altitude
-% assume all spacecrafts begin at LCO on elliptic plane
-% must be calculated for each craft
+% sdf33
+% updated 5.5.21
+
+% select initial altitude
+% assume all spacecrafts begin at LCO in polar orbit
 % finds delta V, mass, mass ratios, duration for each transfer
 
 %% Missions
@@ -28,7 +27,7 @@ alt = 700000; % m, altitude of LCO
 a2 = radius + alt; % m, radius of LCO
 
 %% Polar Exploration Mission
-fprintf('Polar Exploration Mission:\n\n')
+fprintf('Polar Exploration Mission\n\n')
 
 % landing site = north pole
 angdeg = 20+axial;
@@ -108,15 +107,10 @@ fprintf(' Overall\n')
 fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_dec)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel)
-
 
 %% General Surface Study Mission
 fprintf('\n')
-fprintf('General Surface Study Mission: General Lander 1, 2\n')
+fprintf('Surface Study Mission\n')
 fprintf('\n')
 % landing site = 30 degrees from equator (both northern and southern hemisphere)
 angdeg = 80+axial;
@@ -204,15 +198,10 @@ fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_desc)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel) % lander 1
-% orbits_ceres(craftmass,-angdeg,vel) % lander 2
 
 %% Surface Mapping Study Mission
 fprintf('\n')
-fprintf('Surface Mapping Study Mission: Surface Mapping Orbiter\n')
+fprintf('Surface Mapping Study Mission\n')
 fprintf('\n')
 % desired orbit = polar orbit
 angdeg = 0+axial;
@@ -243,19 +232,10 @@ M_C = M_D/Mratio;
 fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n\n',M0_12-M_C)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel)
-
-
-
-
-
 
 %% Communications Array Mission
 fprintf('\n')
-fprintf('Communications Array Mission: Comms Orbiter 1 & Comms Orbiter 2\n')
+fprintf('Communications Array Mission\n')
 fprintf('\n')
 
 % desired orbit: high elliptic orbit (HEO) with 60 deg axial inclination
@@ -295,10 +275,3 @@ M_C = M_D/Mratio;
 fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n',M0_12-M_C)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = Vpe/1000;
-% orbits_ceres(craftmass,angdeg,vel) % comms orbiter 1
-% orbits_ceres(craftmass,-angdeg,vel) % comms orbiter 2
-% orbits_ceres(craftmass,180+angdeg,vel) % comms orbiter 3
-% orbits_ceres(craftmass,180-angdeg,vel) % comms orbiter 4
