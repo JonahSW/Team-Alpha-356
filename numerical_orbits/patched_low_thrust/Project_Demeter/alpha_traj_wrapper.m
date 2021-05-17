@@ -19,16 +19,16 @@ m_payload = 15197.6;% [kg]
 m_sample = 50;% [kg]
 num_boosters = 4;% [kg]
 
-LEO_departure_dry_mass = 437959.5897;% [kg] (UPDATE VALUES AS CALCS ITERATE)
+LEO_departure_mass = 437959.5897;% [kg] (UPDATE VALUES AS CALCS ITERATE)
 
 LEO_assembly_altitude = 1100e3;% [m]
 LEO_capture_altitude = 1000e3;% [m] UNUSED FOR LUNAR RENDEZVOUS
 LLO_capture_altitude = 10000e3;% [m]
 LCO_altitude = 700e3;%[m]
 launch_inclination = 28.573*(pi/180);
-ceres_loiter_time = 60;% [days]
+ceres_loiter_time = 239.1;% [days] %OVERRIDDEN AFTER DEPARTURE DATES ARE CALCULATED
 
-LEO_assembly_duration = 30*6;% [days]
+LEO_assembly_duration = 30*5+7;% [days]
 crew_earth_return_duration = 14;% [days]
 
 %Solar System
@@ -61,7 +61,7 @@ in_moon = 5.145;% [deg]
 %% Kick Stage Sizing (Partial kick)
 %Chemical Kick Stage for LEO Departure
 solid_propellant_mass = num_boosters*(m_wet_kickstage-m_dry_kickstage);% [kg]
-deltaV_kick = Isp_kick*g0*log((LEO_departure_dry_mass+solid_propellant_mass)/LEO_departure_dry_mass);
+deltaV_kick = Isp_kick*g0*log((LEO_departure_mass+solid_propellant_mass)/LEO_departure_mass);
 
 %% Estimate Delta Vs
 %Assume a low thrust gradual spiral with a sub-optimal climb and plane change
@@ -105,18 +105,31 @@ r0 = r_earth_SOI;
 r = a_moon;
 deltaV6 = spiral(mu_earth,r0,r);
 
-%DeltaV for capturing in Lunar SOI (7)
+%DeltaV for phase change to enter Lunar SOI (7)
 r0 = a_moon;
+delta_theta_LPC = pi;% [rad]
+t_transfer_LPC = 30*(24*3600);% [s]
+t_thrust_LPC = 5.5*(24*3600);% [s]
+accel = phase_change_accel(r0,t_transfer_LPC,t_thrust_LPC,delta_theta_LPC);% [m/s^2] (Check accel is achievable)
+deltaV7 = low_thrust_phase_change(r0,t_transfer_LPC,t_thrust_LPC,delta_theta_LPC);
+
+%DeltaV for capturing in Lunar SOI (8)
+r0 = r_moon_SOI;
 r = LLO_capture_altitude;
 delta_i = in_moon*pi/180;%Plane change to lunar orbit inclination, deg
-deltaV7 = spiral_with_inclination_change(mu_moon,r0,r,delta_i);
+deltaV8 = spiral_with_inclination_change(mu_moon,r0,r,delta_i);
 
 %% Mission Phases
 m_final = m_dry+m_sample-m_payload;% [kg]
 %Moon Inbound
+mratio_8 = exp(deltaV8/(Isp*g0));
+m_wet_8 = m_final*mratio_8;% [kg]
+m_propellant_8 = m_wet_8 - m_final;% [kg]
+duration_8 = m_propellant_8/m_dot_propellant;% [s]
+%Phase to Lunar Orbit
 mratio_7 = exp(deltaV7/(Isp*g0));
 m_wet_7 = m_final*mratio_7;% [kg]
-m_propellant_7 = m_wet_7 - m_final;% [kg]
+m_propellant_7 = m_wet_7 - m_wet_8;% [kg]
 duration_7 = m_propellant_7/m_dot_propellant;% [s]
 %Earth Inbound
 mratio_6 = exp(deltaV6/(Isp*g0));
@@ -155,33 +168,41 @@ duration_1 = m_propellant_1/m_dot_propellant;% [s]
 %Assembly
 m_wet_initial = m_wet_1 + m_wet_kickstage;% [kg]
 
+%Overwride duration_7 (Lunar Phase Change)
+duration_7 = t_transfer_LPC+t_thrust_LPC;
+
 %Overwride duration_2 (Sun outbound) and duration_5 (Sun inbound) from Zola Lengths
 duration_2_acc = 362*24*3600;% [s]
 duration_2_coast = 50*24*3600;% [s]
 duration_2_dec = 80*24*3600;% [s]
-duration_2 = duration_2_acc+duration_2_coast+duration_2_dec;
+duration_2 = duration_2_acc+duration_2_coast+duration_2_dec;% [s]
 
 duration_5_acc = 235*24*3600;% [s]
 duration_5_coast = 50*24*3600;% [s]
 duration_5_dec = 80*24*3600;% [s]
-duration_5 = duration_2_acc+duration_2_coast+duration_2_dec;
+duration_5 = duration_5_acc+duration_5_coast+duration_5_dec;% [s]
 
-%Calculate Departure Date
+%% Calculate Departure Dates
+%dtheta values come from approximate trajectories in low_thrust_optimized
 dtheta_out_min = 281.064*pi/180;%Difference in true anomalies [rad]
-dtheta_in_min = 97.1*pi/180;%Difference in true anomalies [rad]
 dtheta_out_max = 310*pi/180;%Difference in true anomalies [rad]
+dtheta_in_min = 97.1*pi/180;%Difference in true anomalies [rad]
 dtheta_in_max = 107*pi/180;%Difference in true anomalies [rad]
-t_wait = wait_time(a_earth, a_ceres, dtheta_in_min);
-departure_dates = transfer_window(2,4,dtheta_out_min,dtheta_out_max,duration_2,1);
+t_travel_out = duration_2/(24*3600);% [days]
+t_travel_in = duration_5/(24*3600);% [days]
+earth_departure_dates = transfer_window(2,4,(dtheta_out_min+dtheta_out_max)*0.5,t_travel_out,1);
+ceres_departure_dates = transfer_window(4,2,(dtheta_in_min+dtheta_in_max)*0.5,t_travel_in,1);
+disp(['Earth Departure Opportunities: ',num2str(earth_departure_dates)]);
+disp(['Ceres Departure Opportunities: ',num2str(ceres_departure_dates)]);
 
 %% Results
-deltaV_total = deltaV1+deltaV2+deltaV3+deltaV4+deltaV5+deltaV6+deltaV7;% [m/s]
-mratio_total = mratio_1*mratio_2*mratio_3*mratio_4*mratio_5*mratio_6*mratio_7;
+deltaV_total = deltaV1+deltaV2+deltaV3+deltaV4+deltaV5+deltaV6+deltaV7+deltaV8;% [m/s]
+mratio_total = mratio_1*mratio_2*mratio_3*mratio_4*mratio_5*mratio_6*mratio_7*mratio_8;
 mratio_outbound = mratio_1*mratio_2*mratio_3;
-mratio_inbound = mratio_4*mratio_5*mratio_6*mratio_7;
-m_propellant_total = (m_propellant_1+m_propellant_2+m_propellant_3+m_propellant_4+m_propellant_5+m_propellant_6+m_propellant_7);% [kg]
-duration_thrust = (duration_1+duration_2_acc+duration_2_dec+duration_3+duration_4+duration_5_acc+duration_5_dec+duration_6+duration_7)/(24*3600);% [days] 
-duration_total = (LEO_assembly_duration+duration_thrust+duration_2_coast/(24*3600)+duration_5_coast/(24*3600)+duration_ceres+crew_earth_return_duration);% [days]
+mratio_inbound = mratio_4*mratio_5*mratio_6*mratio_7*mratio_8;
+m_propellant_total = (m_propellant_1+m_propellant_2+m_propellant_3+m_propellant_4+m_propellant_5+m_propellant_6+m_propellant_7+m_propellant_8);% [kg]
+duration_thrust = (duration_1+duration_2_acc+duration_2_dec+duration_3+duration_4+duration_5_acc+duration_5_dec+duration_6+t_thrust_LPC+duration_8)/(24*3600);% [days] 
+duration_total = (LEO_assembly_duration+duration_thrust+duration_2_coast/(24*3600)+duration_5_coast/(24*3600)+(duration_7)/(24*3600)+duration_ceres+crew_earth_return_duration);% [days]
 disp('Delta Vs:');
 disp(['Delta V for the kick stage is: ',num2str(deltaV_kick),' m/s']);
 disp(['The total mission deltaV is ',num2str(deltaV_total*1e-3),' km/s.']);
@@ -200,8 +221,8 @@ disp(['The total crewed mission duration is ',num2str(duration_total - LEO_assem
 disp(['The total mission duration is ',num2str(duration_total),' days.']);
 
 figure()
-wet_masses = [m_wet_initial,m_wet_1,m_wet_2,m_wet_3,m_wet_ceres,m_wet_4,m_wet_5,m_wet_6,m_wet_7,m_final];
-dry_masses = [m_dry+m_dry_kickstage,m_dry,m_dry,m_dry,m_dry-m_payload,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample];
+wet_masses = [m_wet_initial,m_wet_1,m_wet_2,m_wet_3,m_wet_ceres,m_wet_4,m_wet_5,m_wet_6,m_wet_7,m_wet_8,m_final];
+dry_masses = [m_dry+m_dry_kickstage,m_dry,m_dry,m_dry,m_dry-m_payload,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample,m_dry-m_payload+m_sample];
 plot(1:1:length(wet_masses),wet_masses,'-o',1:1:length(dry_masses),dry_masses,'-o');
 grid minor
 xline(1,'-','LEO Assembly Mass');
@@ -213,14 +234,16 @@ xline(6,'-','At Ceres Departure');
 xline(7,'-','After Ceres Spiral Out');
 xline(8,'-','After Sun Spiral In');
 xline(9,'-','After Earth Spiral In');
-xline(10,'-','After Moon Spiral In','LabelHorizontalAlignment','left');
+xline(10,'-','After Lunar Phase Change');
+xline(11,'-','After Moon Spiral In','LabelHorizontalAlignment','left');
 title('Mass over Mission Duration');
 ylabel('Mass (kg)');
 xlabel('Time');
 
 figure()
 durations = [LEO_assembly_duration,duration_1/(24*3600),duration_2/(24*3600),duration_3/(24*3600),...
-    duration_ceres,duration_4/(24*3600),duration_5/(24*3600),duration_6/(24*3600),duration_7/(24*3600),crew_earth_return_duration];
+    duration_ceres,duration_4/(24*3600),duration_5/(24*3600),duration_6/(24*3600),duration_7/(24*3600)...
+    duration_8/(24*3600),crew_earth_return_duration];
 plot(1:1:length(durations),durations,'o');
 grid minor
 xline(1,'-','LEO Assembly');
@@ -231,13 +254,14 @@ xline(6,'-','Ceres Departure');
 xline(7,'-','Ceres Spiral Out');
 xline(8,'-','Spiral In');
 xline(9,'-','Earth Spiral In');
-xline(10,'-','Moon Spiral In','LabelHorizontalAlignment','left');
+xline(10,'-','Lunar Phase Change');
+xline(11,'-','Moon Spiral In','LabelHorizontalAlignment','left');
 title('Mission Phase Duration');
 ylabel('Duration (Days)');
 xlabel('Time');
 
 figure()
-deltaVs = [deltaV1,deltaV2,deltaV3,deltaV4,deltaV5,deltaV6,deltaV7];
+deltaVs = [deltaV1,deltaV2,deltaV3,deltaV4,deltaV5,deltaV6,deltaV7,deltaV8];
 plot(1:1:length(deltaVs),deltaVs,'*r','linewidth',5);
 grid minor
 xline(1,'-','LEO Spiral Out');
@@ -246,9 +270,25 @@ xline(3,'-','Ceres Spiral In');
 xline(4,'-','Ceres Spiral Out');
 xline(5,'-','Heliocentric Fast Spiral In');
 xline(6,'-','Earth Spiral In');
-xline(7,'-','Moon Spiral In','LabelHorizontalAlignment','left');
+xline(7,'-','Lunar Phase Change');
+xline(8,'-','Moon Spiral In','LabelHorizontalAlignment','left');
 title('Delta V for Trajectory Segments');
 ylabel('Delta V (m/s)');
+xlabel('Trajectory Segment');
+
+figure()
+mratios = [mratio_1,mratio_2,mratio_3,mratio_4,mratio_5,mratio_6,mratio_7];
+plot(1:1:length(mratios),mratios,'*b','linewidth',5);
+grid minor
+xline(1,'-','LEO Spiral Out');
+xline(2,'-','Heliocentric Fast Spiral Out');
+xline(3,'-','Ceres Spiral In');
+xline(4,'-','Ceres Spiral Out');
+xline(5,'-','Heliocentric Fast Spiral In');
+xline(6,'-','Earth Spiral In');
+xline(7,'-','Moon Spiral In','LabelHorizontalAlignment','left');
+title('Mass Ratios for Trajectory Segments');
+ylabel('Mi/Mf');
 xlabel('Trajectory Segment');
 %% Functions
 
@@ -264,6 +304,18 @@ function deltaV = spiral_with_inclination_change(mu,r0,r,delta_i)
     deltaV = sqrt(v1^2 + v2^2 - 2*v1*v2*cos((delta_i*pi/180)*pi/2));
 end
 
+%Calculates the deltaV for a sub optimal low thrust phase change
+%Requires orbit radius, time of thrust, time of transfer, and desired phase change
+function deltaV = low_thrust_phase_change(r0,t_transfer,t_thrust,delta_theta)
+    deltaV = (2/3)*(r0*delta_theta)/(t_transfer - t_thrust);
+end
+
+%Calculates the acceleration required for a low thrust phase change
+function accel = phase_change_accel(r0,t_transfer,t_thrust,delta_theta)
+    accel = (r0*delta_theta)/(3*t_thrust*(t_transfer - t_thrust));
+end
+
+%UNUSED: LCO AND LEO DEPARTURE DATES CALCULATED SEPARATELY DUE TO DIFFERENT TRAVEL TIMES
 %Implements a function that calculates the wait time for a given difference in true anomaly
 %a1, a2, are semi major axes of initial and final heliocentric orbits
 function [t_wait] = wait_time(a1, a2, dtheta)
@@ -277,8 +329,8 @@ end
 %Implements a function that can calculate the departure date window an orbital transfer given the
 %required difference in longitudes
 %Returns an array of possible departure days as both indexes (days from 01/01/2040) and dates
-%1 is Venus, 2 is Earth, 3 is Mars, 4 is Ceres, 5 in Jupiter
-function [departure_days, departure_dates] = transfer_window(body1,body2,L12_min,L12_max,t_travel,plotme)
+%1 is Venus, 2 is Earth, 3 is Mars, 4 is Ceres, 5 is Jupiter
+function [departure_days, departure_dates] = transfer_window(body1,body2,L12,t_travel,plotme)
 
     body1_data = read_ephemeris(body1);
     body2_data = read_ephemeris(body2);
@@ -288,11 +340,27 @@ function [departure_days, departure_dates] = transfer_window(body1,body2,L12_min
     theta1 = body1_data(2,:);
     theta2 = body2_data(2,:);
     
+    yr1 = 0;
+    yr2 = 0;
+    for i = 1:1:length(theta1)-1
+       if theta1(i) > theta1(i+1)
+           yr1 = yr1+1;
+       end    
+       if theta2(i) > theta2(i+1)
+           yr1 = yr1+1;
+       end    
+       theta1_temp(i) = theta1(i)+2*pi*yr1; 
+       theta2_temp(i) = theta2(i)+2*pi*yr2;  
+    end
+    
     departure_days = zeros(1,1);
     dtheta = zeros(1,1);
     num_windows = 1;
-    for i = 1:1:length(a1)
-        dtheta(i) = theta2(i) - theta1(i);
+    margin = 0.01;
+    L12_min = L12*(1-margin);
+    L12_max = L12*(1+margin);
+    for i = 1:1:length(theta1_temp)
+        dtheta(i) = mod((theta1_temp(i) - theta2_temp(i)),2*pi);
         if (dtheta(i) > (L12_min)) && (dtheta(i) < (L12_max))
             departure_days(num_windows) = i-t_travel;
             %disp('Found One!');
@@ -307,6 +375,7 @@ function [departure_days, departure_dates] = transfer_window(body1,body2,L12_min
     end
     
     if plotme == 1
+        
         figure()
         plot(1:1:length(theta1),theta1, 1:1:length(theta2),theta2);
         title('True Anomaly Over Time');
@@ -314,16 +383,19 @@ function [departure_days, departure_dates] = transfer_window(body1,body2,L12_min
         ylabel('True Anomaly (rad)');
         legend('Body 1','Body 2')
         
-        figure()
+        figure() 
         plot(1:1:length(dtheta),dtheta);
-        yline(L12_min,'-','Low Thrust Transfer Alignment','LabelVerticalAlignment','bottom')
-        yline(L12_max,'-','Low Thrust Transfer Alignment')
+        yline(L12,'-','Low Thrust Transfer Alignment','LabelVerticalAlignment','bottom')
+        %yline(L12_max,'-','Low Thrust Transfer Alignment')
         title('Difference in True Anomaly Over Time');
         xlabel('Time (days)');
         %legend('Difference in True Anomaly','Hohmann Transfer Alignment')
         
-        xline(departure_days(1),'-',datestr(departure_dates(1)),'HandleVisibility','off','LabelHorizontalAlignment','left'); 
-        xline(departure_days(length(departure_days)),'-',datestr(departure_dates(length(departure_days))),'HandleVisibility','off'); 
+        for i = 1:1:length(departure_dates)
+           xline(departure_days(i),'-',datestr(departure_dates(i)),'HandleVisibility','on'); 
+        end
+        %xline(departure_days(1),'-',datestr(departure_dates(1)),'HandleVisibility','off','LabelHorizontalAlignment','left'); 
+        %xline(departure_days(length(departure_days)),'-',datestr(departure_dates(length(departure_days))),'HandleVisibility','off'); 
         
     end
 end

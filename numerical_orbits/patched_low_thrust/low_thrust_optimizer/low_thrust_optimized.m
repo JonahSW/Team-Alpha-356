@@ -180,3 +180,5 @@ desired_r=linspace(r_target,r_target); desired_th=linspace(0,2*pi);
 polarplot(th,r1,'-r',theta,rho,'-b',theta_end_thrust,rho_end_thrust,'ro',desired_th,desired_r/r0,'-g',theta_end_coast,rho_end_coast,'co')
 
 %Print Key Results
+
+%% Functions
