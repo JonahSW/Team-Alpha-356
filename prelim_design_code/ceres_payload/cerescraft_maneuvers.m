@@ -1,3 +1,4 @@
+
 %% Ceres Craft Maneuvers
 clear; clc; close all;
 
@@ -108,9 +109,9 @@ fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_dec)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
 
-%% General Surface Study Mission
+%% Equatorial Exploration Mission
 fprintf('\n')
-fprintf('Surface Study Mission\n')
+fprintf('Equatorial Exploration Mission\n')
 fprintf('\n')
 % landing site = 30 degrees from equator (both northern and southern hemisphere)
 angdeg = 80+axial;
@@ -199,29 +200,34 @@ fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
 
 
-%% Surface Mapping Study Mission
+%% Surface Mapping Mission
 fprintf('\n')
-fprintf('Surface Mapping Study Mission\n')
+fprintf('Surface Mapping Mission\n')
 fprintf('\n')
-% desired orbit = polar orbit
-angdeg = 0+axial;
-ang = deg2rad(angdeg);
 
+% low Ceres orbit --> surface mapping orbit (hohnmann transfer)
+a1 = 100000+radius; % m, surface mapping orbit radius
+aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
+h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
 VA = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
+VB = sqrt(mu/a1); % m/s, velocity of circular orbit at surface mapping orbit
+Vap = h/a2; % m/s, velocity at apoapsis
+Vpe = h/a1; % m/s, velocity at periapsis
 
 % total delta V's
-delVpc = 2*VA*sin(ang/2); % m/s, plane change at LCO
-delVdep = delVpc;
+delVdep = VA*(1 - sqrt(2*a1/(a1+a2))); % m/s, departure
+delVcap = VB*(sqrt(2*a2/(a1+a2)) - 1); % m/s, capture
+delVtot = delVdep + delVcap; % m/s, total
 
 % time of transfer
 T = pi*sqrt(aT^3/mu); % sec, time to transfer
 fprintf(' Plane Change\n')
-fprintf('   delta V total: %.2f m/s\n',delVdep)
+fprintf('   delta V total: %.2f m/s\n',delVtot)
 fprintf('   Plane Change Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
 Isp = 321; % sec, specific impulse
-M0_12 = 1400; % kg, wet mass before descent
+M0_12 = 1000; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -233,13 +239,13 @@ fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n\n',M0_12-M_C)
 
 
-%% Communications Array Mission
+%% Communications Mission
 fprintf('\n')
-fprintf('Communications Array Mission\n')
+fprintf('Communications Mission\n')
 fprintf('\n')
 
-% desired orbit: high elliptic orbit (HEO) with 60 deg axial inclination
-angdeg = 20+axial;
+% desired orbit: highly elliptical orbit (HEO)
+angdeg = 30+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> HEO with 60 deg axial inclination
