@@ -1,12 +1,12 @@
-% sdf33
-% updated 4.3.21
 
 %% Ceres Craft Maneuvers
 clear; clc; close all;
 
-% selection initial altitude
-% assume all spacecrafts begin at LCO on elliptic plane
-% must be calculated for each craft
+% sdf33
+% updated 5.5.21
+
+% select initial altitude
+% assume all spacecrafts begin at LCO in polar orbit
 % finds delta V, mass, mass ratios, duration for each transfer
 
 %% Missions
@@ -28,7 +28,7 @@ alt = 700000; % m, altitude of LCO
 a2 = radius + alt; % m, radius of LCO
 
 %% Polar Exploration Mission
-fprintf('Polar Exploration Mission:\n\n')
+fprintf('Polar Exploration Mission\n\n')
 
 % landing site = north pole
 angdeg = 20+axial;
@@ -108,15 +108,10 @@ fprintf(' Overall\n')
 fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_dec)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel)
 
-
-%% General Surface Study Mission
+%% Equatorial Exploration Mission
 fprintf('\n')
-fprintf('General Surface Study Mission: General Lander 1, 2\n')
+fprintf('Equatorial Exploration Mission\n')
 fprintf('\n')
 % landing site = 30 degrees from equator (both northern and southern hemisphere)
 angdeg = 80+axial;
@@ -204,35 +199,35 @@ fprintf('   Overall delta V total: %.2f m/s\n',delVtot+delVtot_desc)
 fprintf('   Total Required Propellant Mass: %.2f kg\n\n',M0_21-M_C + req_prop)
 
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel) % lander 1
-% orbits_ceres(craftmass,-angdeg,vel) % lander 2
 
-%% Surface Mapping Study Mission
+%% Surface Mapping Mission
 fprintf('\n')
-fprintf('Surface Mapping Study Mission: Surface Mapping Orbiter\n')
+fprintf('Surface Mapping Mission\n')
 fprintf('\n')
-% desired orbit = polar orbit
-angdeg = 0+axial;
-ang = deg2rad(angdeg);
 
+% low Ceres orbit --> surface mapping orbit (hohnmann transfer)
+a1 = 100000+radius; % m, surface mapping orbit radius
+aT = (a1+a2)/2; % m, semimajor axis of transfer ellipse
+h = sqrt(2*mu*a1*a2/(a1+a2)); % kg-m2/s, angular momentum of transfer orbit
 VA = sqrt(mu/a2); % m/s, velocity of circular orbit at LCO
+VB = sqrt(mu/a1); % m/s, velocity of circular orbit at surface mapping orbit
+Vap = h/a2; % m/s, velocity at apoapsis
+Vpe = h/a1; % m/s, velocity at periapsis
 
 % total delta V's
-delVpc = 2*VA*sin(ang/2); % m/s, plane change at LCO
-delVdep = delVpc;
+delVdep = VA*(1 - sqrt(2*a1/(a1+a2))); % m/s, departure
+delVcap = VB*(sqrt(2*a2/(a1+a2)) - 1); % m/s, capture
+delVtot = delVdep + delVcap; % m/s, total
 
 % time of transfer
 T = pi*sqrt(aT^3/mu); % sec, time to transfer
 fprintf(' Plane Change\n')
-fprintf('   delta V total: %.2f m/s\n',delVdep)
+fprintf('   delta V total: %.2f m/s\n',delVtot)
 fprintf('   Plane Change Time: %.2f hrs\n',T/3600)
 
 % descent mass ratios
 Isp = 321; % sec, specific impulse
-M0_12 = 1400; % kg, wet mass before descent
+M0_12 = 1000; % kg, wet mass before descent
 Mratio = exp(delVdep/(g*Isp));
 Mra = Mratio;
 M_D = M0_12/Mratio;
@@ -243,23 +238,14 @@ M_C = M_D/Mratio;
 fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n\n',M0_12-M_C)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = VB/1000;
-% orbits_ceres(craftmass,angdeg,vel)
 
-
-
-
-
-
-%% Communications Array Mission
+%% Communications Mission
 fprintf('\n')
-fprintf('Communications Array Mission: Comms Orbiter 1 & Comms Orbiter 2\n')
+fprintf('Communications Mission\n')
 fprintf('\n')
 
-% desired orbit: high elliptic orbit (HEO) with 60 deg axial inclination
-angdeg = 20+axial;
+% desired orbit: highly elliptical orbit (HEO)
+angdeg = 30+axial;
 ang = deg2rad(angdeg);
 
 % low Ceres orbit --> HEO with 60 deg axial inclination
@@ -295,10 +281,3 @@ M_C = M_D/Mratio;
 fprintf('   Final Mass: %.2f kg\n',M_C)
 fprintf('   Required Propellant Mass: %.2f kg\n',M0_12-M_C)
 
-% % plot final orbit
-% craftmass = M0_12;
-% vel = Vpe/1000;
-% orbits_ceres(craftmass,angdeg,vel) % comms orbiter 1
-% orbits_ceres(craftmass,-angdeg,vel) % comms orbiter 2
-% orbits_ceres(craftmass,180+angdeg,vel) % comms orbiter 3
-% orbits_ceres(craftmass,180-angdeg,vel) % comms orbiter 4
