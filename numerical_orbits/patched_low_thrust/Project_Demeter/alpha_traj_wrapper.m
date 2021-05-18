@@ -12,17 +12,17 @@ Isp = 8372.1;% [s] (UPDATE REGULARLY)
 Isp_kick = 302.9;% [s]
 m_dot_propellant = 1.51e-3;%[kg/s]
 ep_thrust = 122.32;% [N]
-m_dry = 282e3;% [kg] (UPDATE REGULARLY) (Not including kickstages)
-m_dry_kickstage = 507.16;% [kg]
-m_wet_kickstage = 6742.16;% [kg]
-m_payload = 15197.6;% [kg]
+m_dry = 283.67e3;% [kg] (UPDATE REGULARLY) (Not including kickstages)
+m_dry_kickstage = 528.1;% [kg]
+m_wet_kickstage = 6763.01;% [kg]
+m_payload = 13.956e3;% [kg]
 m_sample = 50;% [kg]
 num_boosters = 4;% [kg]
 
-LEO_departure_mass = 437959.5897;% [kg] (UPDATE VALUES AS CALCS ITERATE)
+LEO_departure_mass = 465.9e3;% [kg] (UPDATE VALUES AS CALCS ITERATE)
 
 LEO_assembly_altitude = 1100e3;% [m]
-LEO_capture_altitude = 1000e3;% [m] UNUSED FOR LUNAR RENDEZVOUS
+%LEO_capture_altitude = 1000e3;% [m] UNUSED FOR LUNAR RENDEZVOUS
 LLO_capture_altitude = 10000e3;% [m]
 LCO_altitude = 700e3;%[m]
 launch_inclination = 28.573*(pi/180);
@@ -61,7 +61,8 @@ in_moon = 5.145;% [deg]
 %% Kick Stage Sizing (Partial kick)
 %Chemical Kick Stage for LEO Departure
 solid_propellant_mass = num_boosters*(m_wet_kickstage-m_dry_kickstage);% [kg]
-deltaV_kick = Isp_kick*g0*log((LEO_departure_mass+solid_propellant_mass)/LEO_departure_mass);
+total_kickstage_mass = num_boosters*(m_dry_kickstage);% [kg]
+deltaV_kick = Isp_kick*g0*log((LEO_departure_mass+total_kickstage_mass)/(LEO_departure_mass+total_kickstage_mass-solid_propellant_mass));
 
 %% Estimate Delta Vs
 %Assume a low thrust gradual spiral with a sub-optimal climb and plane change
@@ -166,7 +167,7 @@ m_propellant_1 = m_wet_1 - m_wet_2;% [kg]
 duration_1 = m_propellant_1/m_dot_propellant;% [s]
 
 %Assembly
-m_wet_initial = m_wet_1 + m_wet_kickstage;% [kg]
+m_wet_initial = m_wet_1 + num_boosters*m_wet_kickstage;% [kg]
 
 %Overwride duration_7 (Lunar Phase Change)
 duration_7 = t_transfer_LPC+t_thrust_LPC;
@@ -184,16 +185,16 @@ duration_5 = duration_5_acc+duration_5_coast+duration_5_dec;% [s]
 
 %% Calculate Departure Dates
 %dtheta values come from approximate trajectories in low_thrust_optimized
-dtheta_out_min = 281.064*pi/180;%Difference in true anomalies [rad]
-dtheta_out_max = 310*pi/180;%Difference in true anomalies [rad]
+dtheta_out_min = 281.1*pi/180;%Difference in true anomalies [rad]
+dtheta_out_max = 311.1*pi/180;%Difference in true anomalies [rad]
 dtheta_in_min = 97.1*pi/180;%Difference in true anomalies [rad]
-dtheta_in_max = 107*pi/180;%Difference in true anomalies [rad]
+dtheta_in_max = 127.1*pi/180;%Difference in true anomalies [rad]
 t_travel_out = duration_2/(24*3600);% [days]
 t_travel_in = duration_5/(24*3600);% [days]
 earth_departure_dates = transfer_window(2,4,(dtheta_out_min+dtheta_out_max)*0.5,t_travel_out,1);
 ceres_departure_dates = transfer_window(4,2,(dtheta_in_min+dtheta_in_max)*0.5,t_travel_in,1);
-disp(['Earth Departure Opportunities: ',num2str(earth_departure_dates)]);
-disp(['Ceres Departure Opportunities: ',num2str(ceres_departure_dates)]);
+%disp(['Earth Departure Opportunities: ',num2str(earth_departure_dates)]);
+%disp(['Ceres Departure Opportunities: ',num2str(ceres_departure_dates)]);
 
 %% Results
 deltaV_total = deltaV1+deltaV2+deltaV3+deltaV4+deltaV5+deltaV6+deltaV7+deltaV8;% [m/s]
@@ -213,7 +214,7 @@ disp(['The total mission mass ratio is ',num2str(mratio_total),'']);
 disp(['The outbound trajectory mass ratio is ',num2str(mratio_outbound),'']);
 disp(['The inbound trajectory mass ratio is ',num2str(mratio_inbound),'']);
 disp('Masses:');
-disp(['The total spacecraft wet mass is ',num2str(m_wet_1),' kg.']);
+disp(['The total spacecraft wet mass is ',num2str(m_wet_initial),' kg.']);
 disp(['The total propellant mass is ',num2str(m_propellant_total),' kg.']);
 disp('Durations:');
 disp(['The total thrusting duration is ',num2str(duration_thrust),' days.']);
@@ -244,18 +245,19 @@ figure()
 durations = [LEO_assembly_duration,duration_1/(24*3600),duration_2/(24*3600),duration_3/(24*3600),...
     duration_ceres,duration_4/(24*3600),duration_5/(24*3600),duration_6/(24*3600),duration_7/(24*3600)...
     duration_8/(24*3600),crew_earth_return_duration];
-plot(1:1:length(durations),durations,'o');
+plot(1:1:length(durations),durations,'o','linewidth',3);
 grid minor
 xline(1,'-','LEO Assembly');
-xline(3,'-','LEO Spiral Out');
-xline(4,'-','Sun Spiral Out');
-xline(5,'-','Ceres Spiral In');
-xline(6,'-','Ceres Departure');
-xline(7,'-','Ceres Spiral Out');
-xline(8,'-','Spiral In');
-xline(9,'-','Earth Spiral In');
-xline(10,'-','Lunar Phase Change');
-xline(11,'-','Moon Spiral In','LabelHorizontalAlignment','left');
+xline(2,'-','LEO Spiral Out');
+xline(3,'-','Sun Spiral Out');
+xline(4,'-','Ceres Spiral In');
+xline(5,'-','Ceres Science Mission');
+xline(6,'-','Ceres Spiral Out');
+xline(7,'-','Sun Spiral Out');
+xline(8,'-','EarthSpiral In');
+xline(9,'-','Lunar Phase Change');
+xline(10,'-','Lunar Spiral In');
+xline(11,'-','Return to Earth','LabelHorizontalAlignment','left');
 title('Mission Phase Duration');
 ylabel('Duration (Days)');
 xlabel('Time');
@@ -277,7 +279,7 @@ ylabel('Delta V (m/s)');
 xlabel('Trajectory Segment');
 
 figure()
-mratios = [mratio_1,mratio_2,mratio_3,mratio_4,mratio_5,mratio_6,mratio_7];
+mratios = [mratio_1,mratio_2,mratio_3,mratio_4,mratio_5,mratio_6,mratio_7,mratio_8];
 plot(1:1:length(mratios),mratios,'*b','linewidth',5);
 grid minor
 xline(1,'-','LEO Spiral Out');
@@ -286,7 +288,8 @@ xline(3,'-','Ceres Spiral In');
 xline(4,'-','Ceres Spiral Out');
 xline(5,'-','Heliocentric Fast Spiral In');
 xline(6,'-','Earth Spiral In');
-xline(7,'-','Moon Spiral In','LabelHorizontalAlignment','left');
+xline(7,'-','Lunar Phase Change');
+xline(8,'-','Moon Spiral In','LabelHorizontalAlignment','left');
 title('Mass Ratios for Trajectory Segments');
 ylabel('Mi/Mf');
 xlabel('Trajectory Segment');
